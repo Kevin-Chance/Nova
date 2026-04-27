@@ -1,0 +1,95 @@
+
+#ifndef ECOS_FMI_SCALAR_VARIABLE_HPP
+#define ECOS_FMI_SCALAR_VARIABLE_HPP
+
+#include <cstdint>
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <variant>
+#include <vector>
+
+namespace fmilibcpp
+{
+
+struct real_attributes
+{
+    std::optional<double> start;
+};
+
+struct integer_attributes
+{
+    std::optional<int32_t> start;
+};
+
+struct string_attributes
+{
+    std::optional<std::string> start;
+};
+
+struct boolean_attributes
+{
+    std::optional<bool> start;
+};
+
+struct vector_attributes
+{
+    std::optional<std::vector<double>> start;
+};
+
+using value_ref = uint32_t;
+using type_attributes = std::variant<integer_attributes, real_attributes, string_attributes, boolean_attributes,vector_attributes>;
+
+inline std::string type_name(const type_attributes& attribute)
+{
+    switch (attribute.index()) {
+        case 0: return "integer";
+        case 1: return "real";
+        case 2: return "string";
+        case 3: return "boolean";
+        case 4: return "vector";
+        default: throw std::runtime_error("Invalid variant");
+    }
+}
+
+struct scalar_variable
+{
+    value_ref vr;
+    std::string name;
+    std::string description;
+    std::optional<std::string> causality;
+    std::optional<std::string> variability;
+    type_attributes typeAttributes;
+    int vectorLength; 
+
+    [[nodiscard]] bool is_integer() const
+    {
+        return typeAttributes.index() == 0;
+    }
+
+    [[nodiscard]] bool is_real() const
+    {
+        return typeAttributes.index() == 1;
+    }
+
+    [[nodiscard]] bool is_string() const
+    {
+        return typeAttributes.index() == 2;
+    }
+
+    [[nodiscard]] bool is_boolean() const
+    {
+        return typeAttributes.index() == 3;
+    }
+
+    [[nodiscard]] bool is_vector() const
+    {
+        return typeAttributes.index() == 4;
+    }
+};
+
+using model_variables = std::vector<scalar_variable>;
+
+} // namespace fmilibcpp
+
+#endif // ECOS_FMI_SCALAR_VARIABLE_HPP

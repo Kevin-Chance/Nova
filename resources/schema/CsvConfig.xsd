@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:ecos="http://github.com/Ecos-platform/libecos/resources/schema/CsvConfig"
+           elementFormDefault="qualified"
+           targetNamespace="http://github.com/Ecos-platform/libecos/resources/schema/CsvConfig">
+
+    <xs:element name="CsvConfig" type="ecos:TCsvConfig"/>
+
+    <xs:complexType name="TCsvConfig">
+        <xs:sequence>
+            <xs:element name="components" type="ecos:TComponents"/>
+        </xs:sequence>
+        <xs:attribute name="decimationFactor" type="xs:integer" default="1"/>
+    </xs:complexType>
+
+    <xs:complexType name="TComponents">
+        <xs:sequence>
+            <xs:element name="component" type="ecos:TComponent" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TComponent">
+        <xs:sequence>
+            <xs:element name="variable" type="ecos:TVariable" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TVariable">
+        <xs:sequence>
+            <xs:element name="linearTransformation" type="ecos:TLinearTransformation" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TLinearTransformation">
+        <xs:attribute name="offset" type="xs:double" default="0"/>
+        <xs:attribute name="factor" type="xs:double" default="1"/>
+    </xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ssd:SystemStructureDescription xmlns:ssc="http://ssp-standard.org/SSP1/SystemStructureCommon"
+                                xmlns:ssd="http://ssp-standard.org/SSP1/SystemStructureDescription"
+                                xmlns:ssv="http://ssp-standard.org/SSP1/SystemStructureParameterValues"
+                                xmlns:osp="http://opensimulationplatform.com/SSP/OSPAnnotations"
+                                name="QuarterTruck"
+                                version="1.0">
+
+    <ssd:System name="QuarterTruckSystem" description="Quarter-truck co-simulation">
+
+        <ssd:Elements>
+            <ssd:Component name="chassis" source="resources/chassis.fmu">
+                <ssd:Connectors>
+                    <ssd:Connector name="p.e" kind="output">
+                        <ssc:Real/>
+                    </ssd:Connector>
+                    <ssd:Connector name="p.f" kind="input">
+                        <ssc:Real/>
+                    </ssd:Connector>
+                </ssd:Connectors>
+                <ssd:ParameterBindings>
+                    <ssd:ParameterBinding source="ssv/initialValues_chassis.ssv"/>
+                </ssd:ParameterBindings>
+            </ssd:Component>
+            <ssd:Component name="wheel" source="resources/wheel.fmu">
+                <ssd:Connectors>
+                    <ssd:Connector name="p.f" kind="input">
+                        <ssc:Real/>
+                    </ssd:Connector>
+                    <ssd:Connector name="p1.e" kind="input">
+                        <ssc:Real/>
+                    </ssd:Connector>
+                    <ssd:Connector name="p.e" kind="output">
+                        <ssc:Real/>
+                    </ssd:Connector>
+                    <ssd:Connector name="p1.f" kind="output">
+                        <ssc:Real/>
+                    </ssd:Connector>
+                </ssd:Connectors>
+                <ssd:ParameterBindings>
+                    <ssd:ParameterBinding source="ssv/initialValues_wheel.ssv"/>
+                </ssd:ParameterBindings>
+            </ssd:Component>
+            <ssd:Component name="ground" source="resources/ground.fmu">
+                <ssd:Connectors>
+                    <ssd:Connector name="p.e" kind="input">
+                        <ssc:Real/>
+                    </ssd:Connector>
+                    <ssd:Connector name="p.f" kind="output">
+                        <ssc:Real/>
+                    </ssd:Connector>
+                </ssd:Connectors>
+            </ssd:Component>
+        </ssd:Elements>
+
+        <ssd:Connections>
+            <ssd:Connection startElement="chassis" startConnector="p.e" endElement="wheel" endConnector="p1.e"/>
+            <ssd:Connection startElement="wheel" startConnector="p1.f" endElement="chassis" endConnector="p.f"/>
+            <ssd:Connection startElement="wheel" startConnector="p.e" endElement="ground" endConnector="p.e"/>
+            <ssd:Connection startElement="ground" startConnector="p.f" endElement="wheel" endConnector="p.f"/>
+        </ssd:Connections>
+
+    </ssd:System>
+
+    <ssd:DefaultExperiment startTime="10">
+        <ssd:Annotations>
+            <ssc:Annotation type="com.opensimulationplatform">
+                <osp:Algorithm>
+                    <osp:FixedStepAlgorithm baseStepSize="1e-4"/>
+                </osp:Algorithm>
+            </ssc:Annotation>
+        </ssd:Annotations>
+    </ssd:DefaultExperiment>
+
+</ssd:SystemStructureDescription>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription
+    fmiVersion="2.0"
+    modelName="SubsystemA"
+    guid="{8b7d03a3-fc0d-407a-9b63-7acc613b299f}"
+    generationTool="MWORKS.Sysplorer"
+    generationDateAndTime="2026-01-19T13:48:39Z"
+    variableNamingConvention="structured">
+
+    <CoSimulation
+        modelIdentifier="SubsystemA"
+        needsExecutionTool="false"
+        canHandleVariableCommunicationStepSize="true"
+        canInterpolateInputs="false"
+        maxOutputDerivativeOrder="0"
+        canRunAsynchronuously="false"
+        canBeInstantiatedOnlyOncePerProcess="false"
+        canNotUseMemoryManagementFunctions="false"
+        canGetAndSetFMUstate="false"
+        canSerializeFMUstate="false"
+        providesDirectionalDerivative="false"/>
+
+    <LogCategories>
+        <Category name="logEvents" description="Log all events(during initialization and simulation)."/>
+        <Category name="logSingularLinearSystems" description="Log the solution of linear systems of equations if the solution is singular(and the tool picked one solution of the infinitely many solutions)."/>
+        <Category name="logNonlinearSystems" description="Log the solution of nonlinear systems of equations."/>
+        <Category name="logDynamicStateSelection" description="Log the dynamic selection of states."/>
+        <Category name="logStatusWarning" description="Log messages when returning fmi2Warning status from any function."/>
+        <Category name="logStatusDiscard" description="Log messages when returning fmi2Discard status from any function."/>
+        <Category name="logStatusError" description="Log messages when returning fmi2Error status from any function."/>
+        <Category name="logStatusFatal" description="Log messages when returning fmi2Fatal status from any function."/>
+        <Category name="logAll" description="Log all messages."/>
+    </LogCategories>
+
+    <DefaultExperiment startTime="0" stopTime="5" tolerance="0.0001" stepSize="0.01"/>
+
+    <ModelVariables>
+        <ScalarVariable
+            name="u_a"
+            valueReference="94"
+            description="来自子系统 B 的耦合输入"
+            causality="input">
+            <Real start="4" />
+        </ScalarVariable>    <!-- index = 1 -->
+        <ScalarVariable
+            name="y_a"
+            valueReference="128"
+            description="发送给子系统 B 的输出"
+            causality="output"
+            initial="exact">
+            <Real start="4.0" />
+        </ScalarVariable>    <!-- index = 2 -->
+        <ScalarVariable
+            name="x_a"
+            valueReference="206"
+            description="系统 A 的状态变量"
+            initial="exact">
+            <Real start="2.0" />
+        </ScalarVariable>    <!-- index = 3 -->
+    </ModelVariables>
+
+    <ModelStructure>
+        <Outputs>
+            <Unknown index="2"/>
+        </Outputs>
+        <InitialUnknowns>
+            <Unknown index="2"/>
+        </InitialUnknowns>
+    </ModelStructure>
+</fmiModelDescription>

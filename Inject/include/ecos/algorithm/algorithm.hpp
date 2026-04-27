@@ -1,0 +1,23 @@
+
+#ifndef ECOS_ALGORITHM_HPP
+#define ECOS_ALGORITHM_HPP
+
+#include "ecos/model_instance.hpp"
+
+namespace ecos
+{
+
+struct algorithm
+{
+
+    virtual void model_instance_added(model_instance* instance) = 0;
+
+    virtual double step(double currentTime) = 0;
+
+    virtual ~algorithm() = default;
+};
+
+
+} // namespace ecos
+
+#endif // ECOS_ALGORITHM_HPP
