@@ -11,8 +11,8 @@ int main()
 {
     set_logging_level(log::level::debug);
 
-    std::filesystem::create_directories("results");
-    std::string resultFile{"results/nova_bouncing_ball_cpp.csv"};
+    std::filesystem::create_directories(RESULT_FOLDER);
+    std::string resultFile{std::string(RESULT_FOLDER) + "/nova_bouncing_ball_cpp.csv"};
     const std::string fmuPath{std::string(DATA_FOLDER) + "/fmus/3.0/ref/BouncingBall.fmu"};
 
     simulation_structure ss;

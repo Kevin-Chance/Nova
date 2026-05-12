@@ -15,7 +15,7 @@ class strong_coupling_algorithm : public algorithm
 public:
     explicit strong_coupling_algorithm(double baseStepSize, simulation& sim);
     void initialize(double startTime) override;
-    double step(double currentTime) override;
+    double step(double currentTime, simulation& sim) override;
     void model_instance_added(model_instance* instance);
     ~strong_coupling_algorithm() override;
 

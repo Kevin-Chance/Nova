@@ -47,7 +47,8 @@ inline int run(const std::filesystem::path& fmuPath, bool remoting)
             t_ref->set_output_modifier(kelvi2deg);
         }
 // 5. 配置 CSV 监听器 (现在支持自动全量记录)
-auto csvWriter = std::make_unique<csv_writer>("results/nova_controlled_temperature.csv");
+std::filesystem::create_directories(RESULT_FOLDER);
+auto csvWriter = std::make_unique<csv_writer>(std::string(RESULT_FOLDER) + "/nova_controlled_temperature.csv");
 sim->add_listener("csv_writer", std::move(csvWriter));
 
         // 6. 执行仿真 (10s, 使用新实现的 step_for)
@@ -56,7 +57,7 @@ sim->add_listener("csv_writer", std::move(csvWriter));
 
         sim->terminate();
 
-        log::info("Nova simulation finished. Output: results/nova_controlled_temperature.csv");
+        log::info("Nova simulation finished. Output: {}/nova_controlled_temperature.csv", RESULT_FOLDER);
 
     } catch (const std::exception& ex) {
         log::err(ex.what());

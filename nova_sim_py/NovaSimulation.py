@@ -72,3 +72,9 @@ class NovaSimulation:
         if _get(self.sim, instance.encode(), variable.encode(), byref(val)):
             return val.value
         return None
+
+    def set_real(self, instance, variable, value):
+        _set = dll.nova_simulation_set_real
+        _set.argtypes = [c_void_p, c_char_p, c_char_p, c_double]
+        _set.restype = c_bool
+        return _set(self.sim, instance.encode(), variable.encode(), value)

@@ -58,7 +58,7 @@ public:
     }
 
     void add_parameter_set(const std::string& name, const std::map<variable_identifier, scalar_value>& paramMap) {
-        // Implementation for compatibility
+        parameterSets_[name] = paramMap;
     }
 
     std::unique_ptr<simulation> load(std::unique_ptr<algorithm> algorithm);
@@ -67,6 +67,7 @@ private:
     std::vector<DataLink> links_;
     std::vector<VariableEntry> variables_;
     std::unordered_map<std::string, std::pair<std::shared_ptr<model>, std::optional<double>>> models_;
+    std::unordered_map<std::string, std::map<variable_identifier, scalar_value>> parameterSets_;
 };
 
 } // namespace nova_sim

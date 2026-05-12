@@ -56,11 +56,9 @@ struct simulation::Impl
             for (auto& listener : listeners_ | std::views::values) listener->pre_step(sim_);
             scenario_.apply(currentTime_);
             
-            for (auto& inst : instances_) inst->get_properties().apply_sets();
-            newT = algorithm_->step(currentTime_);
-            for (auto& inst : instances_) inst->get_properties().apply_gets();
+            // Sync links is now handled inside algorithm_->step to allow sequential execution
+            newT = algorithm_->step(currentTime_, sim_);
 
-            transfer_data();
             lastDelta_ = newT - currentTime_;
             currentTime_ = newT;
             ++num_iterations_;
@@ -77,18 +75,50 @@ struct simulation::Impl
         auto fixed_algo = dynamic_cast<fixed_step_algorithm*>(algorithm_.get());
         for (auto& instance : instances_) {
             if (fixed_algo) fixed_algo->model_instance_added(instance.get());
-            if (parameterSet) instance->apply_parameter_set(*parameterSet);
+        }
+
+        // 1. Enter initialization
+        for (auto& instance : instances_) {
             instance->enter_initialization_mode(currentTime_);
         }
-        for (auto& instance : instances_) {
-            instance->get_properties().apply_sets();
-            instance->exit_initialization_mode();
-            instance->get_properties().apply_gets();
+
+        // 2. Apply parameter set during initialization (FMI 2.0) 
+        // or immediately after initializeSlave (FMI 1.0) to match Ecos behavior
+        if (parameterSet) {
+            for (auto& instance : instances_) {
+                instance->apply_parameter_set(*parameterSet);
+            }
         }
+
+        // 3. Propagate initial values and parameters
+        for (int i = 0; i < 3; ++i) {
+            for (auto& instance : instances_) {
+                instance->get_properties().apply_sets();
+                instance->get_properties().apply_gets();
+            }
+            sim_.sync_links();
+        }
+
+        // 4. Exit initialization
+        for (auto& instance : instances_) {
+            instance->exit_initialization_mode();
+        }
+
+        // 5. Final sync after initialization to ensure all outputs are read and propagated
+        for (int i = 0; i < 3; ++i) {
+            for (auto& instance : instances_) {
+                instance->get_properties().apply_gets();
+            }
+            sim_.sync_links();
+            for (auto& instance : instances_) {
+                instance->get_properties().apply_sets();
+            }
+        }
+
         algorithm_->initialize(currentTime_);
         initialized_ = true;
 
-        // 关键点：触发初始化后监听器通知
+        // 触发初始化后监听器通知
         for (auto& listener : listeners_ | std::views::values) {
             listener->post_init(sim_);
         }

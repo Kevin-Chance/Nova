@@ -1,8 +1,8 @@
+
 #include "smd_common.hpp"
 
 int main()
 {
-
     set_logging_level(log::level::debug);
 
     const std::filesystem::path fmuDir =  std::string(DATA_FOLDER) + "/fmus/1.0/mass_spring_damper";
@@ -16,4 +16,6 @@ int main()
     addParameterSets(ss);
 
     run(ss);
+
+    return 0;
 }

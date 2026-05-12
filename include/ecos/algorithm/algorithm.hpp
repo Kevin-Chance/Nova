@@ -6,11 +6,13 @@
 namespace nova_sim
 {
 
+class simulation;
+
 class algorithm
 {
 public:
     virtual void initialize(double startTime) = 0;
-    virtual double step(double currentTime) = 0;
+    virtual double step(double currentTime, simulation& sim) = 0;
     virtual ~algorithm() = default;
 };
 

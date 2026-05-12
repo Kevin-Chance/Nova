@@ -55,6 +55,16 @@ std::unique_ptr<simulation> simulation_structure::load(std::unique_ptr<algorithm
         sim->add_slave(std::move(inst));
     }
 
+    // Transfer parameter sets to instantiated models
+    for (const auto& [setName, paramMap] : parameterSets_) {
+        for (const auto& [identifier, value] : paramMap) {
+            auto inst = sim->get_instance(identifier.instanceName);
+            if (inst) {
+                inst->add_parameterset_entry(setName, identifier.variableName, value);
+            }
+        }
+    }
+
     // Week 4: Populate links in simulation
     for (const auto& link : links_) {
         NovaDataLink nl;

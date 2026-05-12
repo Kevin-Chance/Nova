@@ -19,7 +19,7 @@ strong_coupling_algorithm::strong_coupling_algorithm(double baseStepSize, simula
 
 void strong_coupling_algorithm::initialize(double startTime) {}
 
-double strong_coupling_algorithm::step(double currentTime) {
+double strong_coupling_algorithm::step(double currentTime, simulation& sim) {
     // 强耦合 Gauss-Seidel 迭代逻辑
     for (int i = 0; i < pimpl_->maxIterations; ++i) {
         for (auto* inst : pimpl_->instances) {

@@ -9,16 +9,17 @@
 namespace nova_sim
 {
 
-	class first_order_hold_algorithm
+	class first_order_hold_algorithm : public algorithm
 	{
 	public:
 		first_order_hold_algorithm(double stepSize, bool parallel);
 
 		void model_instance_added(model_instance* instance);
 
-		double step(double currentTime);
+		void initialize(double startTime) override {}
+		double step(double currentTime, simulation& sim) override;
 
-		~first_order_hold_algorithm();
+		~first_order_hold_algorithm() override;
 
 	private:
 		class impl;

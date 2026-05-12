@@ -1,7 +1,4 @@
-# ecos-nuaa
-
-## Ecos
->Ecos is a co-simulation engine, check out https://github.com/Ecos-platform/ecos for detailed information.
+# NovaSim_Nuaa
 
 ## Building
 ```

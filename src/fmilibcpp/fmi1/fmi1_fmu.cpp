@@ -1,4 +1,5 @@
 #include "fmi1_fmu.hpp"
+#include <iostream>
 #include <utility>
 #include <cstdio>
 #include <algorithm>
@@ -53,6 +54,12 @@ fmi1_fmu::fmi1_fmu(std::shared_ptr<NovaFmiLibrary> lib, std::unique_ptr<nova_sim
 
 const model_description& fmi1_fmu::get_model_description() const { return md_; }
 
+// FMI 1.0 initialization state to delay fmiInitializeSlave
+struct Fmi1InitState {
+    double start;
+    double stop;
+};
+
 std::unique_ptr<NovaSlave> fmi1_fmu::new_instance(const std::string& instanceName) {
     auto s = std::make_unique<NovaSlave>(instanceName, md_, lib_);
     auto lib = lib_;
@@ -70,8 +77,9 @@ std::unique_ptr<NovaSlave> fmi1_fmu::new_instance(const std::string& instanceNam
     funcs.allocateMemory = (void*)calloc;
     funcs.freeMemory = (void*)free;
 
-    fmi1Component c = fmi1InstantiateSlave(instanceName.c_str(), md_.guid.c_str(), resource_uri.c_str(), "application/x-fmu-sharedlibrary", 0.0, 0, 0, funcs, 0);
-    if (!c) c = fmi1InstantiateSlave(instanceName.c_str(), md_.guid.c_str(), res.c_str(), "application/x-fmu-sharedlibrary", 0.0, 0, 0, funcs, 0);
+    // FMI 1.0 often prefers plain filesystem path over URI
+    fmi1Component c = fmi1InstantiateSlave(instanceName.c_str(), md_.guid.c_str(), res.c_str(), "application/x-fmu-sharedlibrary", 0.0, 0, 0, funcs, 0);
+    if (!c) c = fmi1InstantiateSlave(instanceName.c_str(), md_.guid.c_str(), resource_uri.c_str(), "application/x-fmu-sharedlibrary", 0.0, 0, 0, funcs, 0);
     if (!c) return nullptr;
 
     s->component_ = std::shared_ptr<void>(c, [fmi1FreeSlaveInstance, lib](void* ptr) {
@@ -90,14 +98,29 @@ std::unique_ptr<NovaSlave> fmi1_fmu::new_instance(const std::string& instanceNam
     auto fmi1GetString = getFmi1Function<fmi1GetString_t>(lib, md_.modelIdentifier, "fmiGetString");
     auto fmi1SetString = getFmi1Function<fmi1SetString_t>(lib, md_.modelIdentifier, "fmiSetString");
 
-    s->fmi.enter_init = [fmi1InitializeSlave](void* ch, double start, double stop, double tol) {
-        return fmi1InitializeSlave ? fmi1InitializeSlave(ch, start, (stop > 0), stop) == 0 : false;
+    auto initState = std::make_shared<Fmi1InitState>();
+    initState->start = 0.0;
+    initState->stop = 0.0;
+
+    s->fmi.enter_init = [initState](void* ch, double start, double stop, double tol) {
+        initState->start = start;
+        initState->stop = stop;
+        return true;
     };
-    s->fmi.exit_init = [](void* ch) { return true; };
+    s->fmi.exit_init = [fmi1InitializeSlave, initState](void* ch) {
+        if (!fmi1InitializeSlave) return false;
+        int status = fmi1InitializeSlave(ch, (fmi1Real)initState->start, (fmi1Boolean)(initState->stop > 0), (fmi1Real)initState->stop);
+        if (status != 0) std::cerr << "[FMI1] Initialize failed with status: " << status << std::endl;
+        return status == 0;
+    };
     s->fmi.step = [fmi1DoStep](void* ch, double t, double dt) { return fmi1DoStep ? fmi1DoStep(ch, t, dt, 1) == 0 : false; };
     s->fmi.terminate = [fmi1TerminateSlave](void* ch) { return fmi1TerminateSlave ? fmi1TerminateSlave(ch) == 0 : false; };
     s->fmi.get_real = [fmi1GetReal](void* ch, const value_ref* vr, size_t n, double* v) { return fmi1GetReal ? fmi1GetReal(ch, vr, n, v) == 0 : false; };
-    s->fmi.set_real = [fmi1SetReal](void* ch, const value_ref* vr, size_t n, const double* v) { return fmi1SetReal ? fmi1SetReal(ch, vr, n, const_cast<double*>(v)) == 0 : false; };
+    s->fmi.set_real = [fmi1SetReal](void* ch, const value_ref* vr, size_t n, const double* v) { 
+        int status = fmi1SetReal ? fmi1SetReal(ch, vr, n, const_cast<double*>(v)) : -1;
+        if (status != 0) std::cerr << "[FMI1] SetReal failed with status: " << status << std::endl;
+        return status == 0; 
+    };
     s->fmi.get_int = [fmi1GetInteger](void* ch, const value_ref* vr, size_t n, int32_t* v) { return fmi1GetInteger ? fmi1GetInteger(ch, vr, n, v) == 0 : false; };
     s->fmi.set_int = [fmi1SetInteger](void* ch, const value_ref* vr, size_t n, const int32_t* v) { return fmi1SetInteger ? fmi1SetInteger(ch, vr, n, const_cast<int32_t*>(v)) == 0 : false; };
     s->fmi.get_bool = [fmi1GetBoolean](void* ch, const value_ref* vr, size_t n, int* v) { return fmi1GetBoolean ? fmi1GetBoolean(ch, vr, n, v) == 0 : false; };

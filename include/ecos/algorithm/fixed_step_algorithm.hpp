@@ -14,7 +14,7 @@ public:
     explicit fixed_step_algorithm(double baseStepSize);
 
     void initialize(double startTime) override;
-    double step(double currentTime) override;
+    double step(double currentTime, simulation& sim) override;
 
     void model_instance_added(model_instance* instance);
 

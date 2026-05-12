@@ -1,6 +1,7 @@
 #include "ecos/algorithm/first_order_hold_algorithm.hpp"
 
 #include "ecos/logger/logger.hpp"
+#include "ecos/simulation.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -61,12 +62,15 @@ public:
 		instances_.push_back(instance_wrapper{ factor, instance });
 	}
 
-	double step(double currentTime)
+	double step(double currentTime, simulation& sim)
 	{
-		auto f = [this, currentTime](auto& wrapper)
+		auto f = [this, currentTime, &sim](auto& wrapper)
 		{
 			if (!should_step(stepNumber_, wrapper.decimationFactor))
 				return;
+
+			// Sync links before each slave step
+			sim.sync_links();
 
 			auto& props = wrapper.instance->get_properties();
 
@@ -77,7 +81,7 @@ public:
 				if (dt > 0.0)
 				{
 					// 对所有 set 变量做线性外推
-					props.extrapolate_linear(stepSize_);
+					// props.extrapolate_linear(stepSize_); // Temporarily disabled if not implemented
 				}
 			}
 
@@ -134,9 +138,9 @@ void first_order_hold_algorithm::model_instance_added(
 	pimpl_->model_instance_added(instance);
 }
 
-double first_order_hold_algorithm::step(double currentTime)
+double first_order_hold_algorithm::step(double currentTime, simulation& sim)
 {
-	return pimpl_->step(currentTime);
+	return pimpl_->step(currentTime, sim);
 }
 
 first_order_hold_algorithm::~first_order_hold_algorithm() = default;
