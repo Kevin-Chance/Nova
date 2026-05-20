@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <pugixml.hpp>
 
 namespace nova_sim {
 
@@ -18,6 +19,36 @@ void csv_config::register_variable(const std::string& instance, const std::strin
 
 void csv_config::register_variable(const variable_identifier& id) {
     variable_register.push_back(id);
+}
+
+void csv_config::load(const std::filesystem::path& configPath) {
+    if (!std::filesystem::exists(configPath)) {
+        throw std::runtime_error("No such file: '" + std::filesystem::absolute(configPath).string() + "'");
+    }
+    if (const auto ext = configPath.extension().string(); ext != ".xml") {
+        throw std::runtime_error("Wrong config extension. Was " + ext + ", expected " + ".xml");
+    }
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_file(configPath.c_str());
+    if (!result) {
+        throw std::runtime_error(
+            "Unable to parse '" + std::filesystem::absolute(configPath).string() + "': " +
+            result.description());
+    }
+
+    const auto root = doc.child("ecos:LogConfig");
+    if (const auto dec = root.attribute("decimationFactor")) {
+        decimation_factor = dec.as_uint();
+    }
+
+    const auto components = root.child("ecos:components");
+    for (const auto& instances : components) {
+        const auto instanceName = instances.attribute("name").as_string();
+        for (const auto& variable : instances) {
+            const auto variableName = variable.attribute("name").as_string();
+            register_variable({instanceName, variableName});
+        }
+    }
 }
 
 bool csv_config::should_log(const std::string& inst, const std::string& var) const {

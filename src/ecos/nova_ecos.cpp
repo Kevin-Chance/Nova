@@ -5,6 +5,7 @@
 #include "ecos/listeners/csv_writer.hpp"
 #include "ecos/logger/logger.hpp"
 #include "ecos/lib_info.hpp"
+#include "ecos/util/plotter.hpp"
 #include <memory>
 #include <map>
 #include <string>
@@ -19,15 +20,23 @@ struct nova_simulation_t {
     std::unique_ptr<simulation> sim;
 };
 
-nova_simulation_structure_t* nova_simulation_structure_create() {
+struct nova_parameter_set_t {
+    std::map<variable_identifier, scalar_value> params;
+};
+
+struct nova_csv_writer_t {
+    std::shared_ptr<csv_writer> writer;
+};
+
+extern "C" NOVA_API nova_simulation_structure_t* nova_simulation_structure_create() {
     return new nova_simulation_structure_t();
 }
 
-void nova_simulation_structure_destroy(nova_simulation_structure_t* ss) {
+extern "C" NOVA_API void nova_simulation_structure_destroy(nova_simulation_structure_t* ss) {
     delete ss;
 }
 
-bool nova_simulation_structure_add_model(nova_simulation_structure_t* ss, const char* name, const char* uri) {
+extern "C" NOVA_API bool nova_simulation_structure_add_model(nova_simulation_structure_t* ss, const char* name, const char* uri) {
     try {
         ss->ss.add_model(name, std::string(uri), std::nullopt);
         return true;
@@ -36,52 +45,91 @@ bool nova_simulation_structure_add_model(nova_simulation_structure_t* ss, const 
     }
 }
 
-void nova_simulation_structure_make_connection(nova_simulation_structure_t* ss, const char* src_inst, const char* src_var, const char* dst_inst, const char* dst_var, const char* type) {
+extern "C" NOVA_API void nova_simulation_structure_make_connection(nova_simulation_structure_t* ss, const char* src_inst, const char* src_var, const char* dst_inst, const char* dst_var, const char* type) {
     if (std::string(type) == "real")
-        ss->ss.make_connection<double>({src_inst, src_var}, {dst_inst, dst_var});
+        ss->ss.make_connection<double>(variable_identifier(src_inst, src_var), variable_identifier(dst_inst, dst_var));
     else if (std::string(type) == "int")
-        ss->ss.make_connection<int>({src_inst, src_var}, {dst_inst, dst_var});
+        ss->ss.make_connection<int>(variable_identifier(src_inst, src_var), variable_identifier(dst_inst, dst_var));
     else if (std::string(type) == "bool")
-        ss->ss.make_connection<bool>({src_inst, src_var}, {dst_inst, dst_var});
+        ss->ss.make_connection<bool>(variable_identifier(src_inst, src_var), variable_identifier(dst_inst, dst_var));
 }
 
-nova_simulation_t* nova_simulation_create(nova_simulation_structure_t* ss, double step_size) {
+extern "C" NOVA_API void nova_simulation_structure_make_real_connection_mod(nova_simulation_structure_t* ss, const char* src, const char* dst, nova_real_modifier_t modifier) {
+    std::function<double(const double&)> mod_fn;
+    if (modifier) mod_fn = modifier;
+    ss->ss.make_connection<double>(src, dst, modifier ? std::make_optional(mod_fn) : std::nullopt);
+}
+
+extern "C" NOVA_API void nova_simulation_structure_make_real_connection(nova_simulation_structure_t* ss, const char* src, const char* dst) {
+    nova_simulation_structure_make_real_connection_mod(ss, src, dst, nullptr);
+}
+
+extern "C" NOVA_API nova_parameter_set_t* nova_parameter_set_create() {
+    return new nova_parameter_set_t();
+}
+
+extern "C" NOVA_API void nova_parameter_set_add_real(nova_parameter_set_t* pps, const char* name, double value) {
+    pps->params[variable_identifier(name)] = value;
+}
+
+extern "C" NOVA_API void nova_parameter_set_destroy(nova_parameter_set_t* pps) {
+    delete pps;
+}
+
+extern "C" NOVA_API void nova_simulation_structure_add_parameter_set(nova_simulation_structure_t* ss, const char* name, nova_parameter_set_t* pps) {
+    ss->ss.add_parameter_set(std::string(name), pps->params);
+}
+
+extern "C" NOVA_API nova_simulation_t* nova_simulation_create(nova_simulation_structure_t* ss, double step_size) {
     auto algo = std::make_unique<fixed_step_algorithm>(step_size);
     auto sim = new nova_simulation_t();
     sim->sim = ss->ss.load(std::move(algo));
     return sim;
 }
 
-void nova_simulation_destroy(nova_simulation_t* sim) {
+extern "C" NOVA_API void nova_simulation_destroy(nova_simulation_t* sim) {
     delete sim;
 }
 
-bool nova_simulation_init(nova_simulation_t* sim, double start_time) {
+extern "C" NOVA_API bool nova_simulation_load_scenario(nova_simulation_t* sim, const char* scenario_file) {
     try {
-        sim->sim->init(start_time);
+        sim->sim->load_scenario(std::filesystem::path(scenario_file));
         return true;
     } catch (...) {
         return false;
     }
 }
 
-double nova_simulation_step(nova_simulation_t* sim, unsigned int num_steps) {
+extern "C" NOVA_API bool nova_simulation_init(nova_simulation_t* sim, double start_time, const char* parameter_set) {
+    try {
+        if (parameter_set && std::string(parameter_set) != "") {
+            sim->sim->init(start_time, std::string(parameter_set));
+        } else {
+            sim->sim->init(start_time, std::nullopt);
+        }
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+extern "C" NOVA_API double nova_simulation_step(nova_simulation_t* sim, unsigned int num_steps) {
     return sim->sim->step(num_steps);
 }
 
-void nova_simulation_step_until(nova_simulation_t* sim, double time_point) {
+extern "C" NOVA_API void nova_simulation_step_until(nova_simulation_t* sim, double time_point) {
     sim->sim->step_until(time_point);
 }
 
-void nova_simulation_step_for(nova_simulation_t* sim, double duration) {
+extern "C" NOVA_API void nova_simulation_step_for(nova_simulation_t* sim, double duration) {
     sim->sim->step_for(duration);
 }
 
-void nova_simulation_terminate(nova_simulation_t* sim) {
+extern "C" NOVA_API void nova_simulation_terminate(nova_simulation_t* sim) {
     sim->sim->terminate();
 }
 
-bool nova_simulation_get_real(nova_simulation_t* sim, const char* instance, const char* variable, double* value) {
+extern "C" NOVA_API bool nova_simulation_get_real(nova_simulation_t* sim, const char* instance, const char* variable, double* value) {
     auto prop = sim->sim->get_real_property({instance, variable});
     if (prop) {
         *value = prop->get_value();
@@ -90,7 +138,7 @@ bool nova_simulation_get_real(nova_simulation_t* sim, const char* instance, cons
     return false;
 }
 
-bool nova_simulation_set_real(nova_simulation_t* sim, const char* instance, const char* variable, double value) {
+extern "C" NOVA_API bool nova_simulation_set_real(nova_simulation_t* sim, const char* instance, const char* variable, double value) {
     auto prop = sim->sim->get_real_property({instance, variable});
     if (prop) {
         prop->set_value(value);
@@ -101,6 +149,32 @@ bool nova_simulation_set_real(nova_simulation_t* sim, const char* instance, cons
 
 extern "C" NOVA_API void nova_simulation_add_csv_writer(nova_simulation_t* sim, const char* filename) {
     sim->sim->add_listener("csv_writer", std::make_unique<nova_sim::csv_writer>(filename));
+}
+
+extern "C" NOVA_API nova_csv_writer_t* nova_csv_writer_create(const char* filename, const char* config_path) {
+    auto w = new nova_csv_writer_t();
+    w->writer = std::make_shared<csv_writer>(std::string(filename));
+    if (config_path && std::string(config_path) != "") {
+        try {
+            w->writer->config().load(std::string(config_path));
+        } catch(const std::exception& e) {
+            log::err("Failed to load CSV config: {}", e.what());
+        }
+    }
+    return w;
+}
+
+extern "C" NOVA_API void nova_simulation_add_listener(nova_simulation_t* sim, const char* name, nova_csv_writer_t* writer) {
+    sim->sim->add_listener(std::string(name), writer->writer);
+    delete writer;
+}
+
+extern "C" NOVA_API void nova_plot_csv(const char* csv_path, const char* config_path) {
+    try {
+        nova_sim::plot_csv(std::string(csv_path), std::string(config_path));
+    } catch(const std::exception& e) {
+        log::err("Failed to plot: {}", e.what());
+    }
 }
 
 // Version info

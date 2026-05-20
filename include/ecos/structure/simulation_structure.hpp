@@ -24,6 +24,7 @@ struct DataLink {
     std::string dst_instance;
     std::string dst_variable;
     std::string type;
+    std::function<double(double)> real_modifier; // Added to support real connection modifiers
 };
 
 // Week 5: VariableEntry for linear search
@@ -48,13 +49,17 @@ public:
     void make_connection(variable_identifier source, variable_identifier sink, const std::optional<std::function<T(const T&)>>& modifier = std::nullopt)
     {
         std::string type;
-        if constexpr (std::is_same_v<T, double>) type = "real";
+        std::function<double(double)> real_modifier;
+        if constexpr (std::is_same_v<T, double>) {
+            type = "real";
+            if (modifier) real_modifier = *modifier;
+        }
         else if constexpr (std::is_same_v<T, int>) type = "int";
         else if constexpr (std::is_same_v<T, bool>) type = "bool";
         else if constexpr (std::is_same_v<T, std::string>) type = "string";
         else if constexpr (std::is_same_v<T, std::vector<double>>) type = "vector";
         
-        links_.push_back({source.instanceName, source.variableName, sink.instanceName, sink.variableName, type});
+        links_.push_back({source.instanceName, source.variableName, sink.instanceName, sink.variableName, type, real_modifier});
     }
 
     void add_parameter_set(const std::string& name, const std::map<variable_identifier, scalar_value>& paramMap) {

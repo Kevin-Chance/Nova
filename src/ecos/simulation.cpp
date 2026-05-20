@@ -43,7 +43,11 @@ struct simulation::Impl
             if (link.type == "real") {
                 auto sp = src_props.get_real_property(link.src_variable);
                 auto dp = dst_props.get_real_property(link.dst_variable);
-                if (sp && dp) dp->set_value(sp->get_value());
+                if (sp && dp) {
+                    double val = sp->get_value();
+                    if (link.real_modifier) val = link.real_modifier(val);
+                    dp->set_value(val);
+                }
             }
         }
     }

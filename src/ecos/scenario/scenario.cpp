@@ -42,26 +42,75 @@ void scenario::reset() {
 }
 
 void scenario::load(const std::filesystem::path& config, std::vector<std::unique_ptr<model_instance>>& instances) {
+    if (!std::filesystem::exists(config)) {
+        throw std::runtime_error("No such file: " + std::filesystem::absolute(config).string());
+    }
+
+    if (const auto ext = config.extension().string(); ext != ".xml") {
+        throw std::runtime_error("Wrong config extension. Was " + ext + ", expected " + ".xml");
+    }
+
     pugi::xml_document doc;
-    if (!doc.load_file(config.c_str())) return;
+    if (pugi::xml_parse_result result = doc.load_file(config.c_str()); !result) {
+        throw std::runtime_error("Unable to parse '" + std::filesystem::absolute(config).string() + "': " + result.description());
+    }
 
-    for (auto action : doc.child("ScenarioConfig").children("Action")) {
-        double t = action.attribute("t").as_double();
-        for (auto var : action.children("Variable")) {
-            std::string instName = var.attribute("instance").as_string();
-            std::string varName = var.attribute("name").as_string();
-            double value = var.attribute("value").as_double();
+    const auto root = doc.child("ecos:Scenario");
+    for (const auto& action : root) {
+        const auto t = action.attribute("t").as_double();
+        const auto epsAttr = action.attribute("eps");
+        std::optional<double> eps;
+        if (epsAttr) eps = epsAttr.as_double();
 
-            // Week 6: Linear search for instance intervention
-            invoke_at(timed_action(t, [instName, varName, value, &instances]() {
-                for (auto& inst : instances) {
-                    if (inst->instanceName() == instName) {
-                        auto prop = inst->get_properties().get_real_property(varName);
-                        if (prop) prop->set_value(value);
-                        break;
+        for (const auto& variable : action) {
+            variable_identifier id = variable.attribute("id").as_string();
+
+            pugi::xml_node var;
+            if ((var = variable.child("ecos:real"))) {
+                const double value = var.attribute("value").as_double();
+                invoke_at(timed_action(t, [id, value, &instances]() {
+                    for (auto& inst : instances) {
+                        if (inst->instanceName() == id.instanceName) {
+                            auto prop = inst->get_properties().get_real_property(id.variableName);
+                            if (prop) prop->set_value(value);
+                            break;
+                        }
                     }
-                }
-            }));
+                }, eps));
+            } else if ((var = variable.child("ecos:integer"))) {
+                const int value = var.attribute("value").as_int();
+                invoke_at(timed_action(t, [id, value, &instances]() {
+                    for (auto& inst : instances) {
+                        if (inst->instanceName() == id.instanceName) {
+                            auto prop = inst->get_properties().get_int_property(id.variableName);
+                            if (prop) prop->set_value(value);
+                            break;
+                        }
+                    }
+                }, eps));
+            } else if ((var = variable.child("ecos:boolean"))) {
+                const bool value = var.attribute("value").as_bool();
+                invoke_at(timed_action(t, [id, value, &instances]() {
+                    for (auto& inst : instances) {
+                        if (inst->instanceName() == id.instanceName) {
+                            auto prop = inst->get_properties().get_bool_property(id.variableName);
+                            if (prop) prop->set_value(value);
+                            break;
+                        }
+                    }
+                }, eps));
+            } else if ((var = variable.child("ecos:string"))) {
+                const std::string value = var.attribute("value").as_string();
+                invoke_at(timed_action(t, [id, value, &instances]() {
+                    for (auto& inst : instances) {
+                        if (inst->instanceName() == id.instanceName) {
+                            auto prop = inst->get_properties().get_string_property(id.variableName);
+                            if (prop) prop->set_value(value);
+                            break;
+                        }
+                    }
+                }, eps));
+            }
         }
     }
 }

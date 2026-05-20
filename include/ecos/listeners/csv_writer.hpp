@@ -16,6 +16,7 @@ class csv_config
 public:
     void register_variable(const std::string& instance, const std::string& variable);
     void register_variable(const variable_identifier& id);
+    void load(const std::filesystem::path& configPath);
     
     bool is_empty() const { return variable_register.empty(); }
     bool should_log(const std::string& inst, const std::string& var) const;

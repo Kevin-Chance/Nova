@@ -15,11 +15,12 @@ class NovaSimulation:
         if not self.sim:
             raise Exception("Failed to create Nova simulation")
 
-    def init(self, start_time=0.0):
+    def init(self, start_time=0.0, parameter_set=None):
         _init = dll.nova_simulation_init
-        _init.argtypes = [c_void_p, c_double]
+        _init.argtypes = [c_void_p, c_double, c_char_p]
         _init.restype = c_bool
-        return _init(self.sim, start_time)
+        param_set_str = parameter_set.encode() if parameter_set else None
+        return _init(self.sim, start_time, param_set_str)
 
     def step(self, num_steps=1):
         _step = dll.nova_simulation_step
@@ -42,11 +43,23 @@ class NovaSimulation:
         _term.argtypes = [c_void_p]
         _term(self.sim)
 
-    def add_csv_writer(self, result_file):
-        _add = dll.nova_simulation_add_csv_writer
-        _add.argtypes = [c_void_p, c_char_p]
-        _add.restype = None
-        _add(self.sim, result_file.encode())
+    def load_scenario(self, scenario_file):
+        _load = dll.nova_simulation_load_scenario
+        _load.argtypes = [c_void_p, c_char_p]
+        _load.restype = c_bool
+        return _load(self.sim, scenario_file.encode())
+
+    def add_csv_writer(self, result_file, config_path=None):
+        _create_writer = dll.nova_csv_writer_create
+        _create_writer.argtypes = [c_char_p, c_char_p]
+        _create_writer.restype = c_void_p
+        
+        cfg_path_str = config_path.encode() if config_path else None
+        writer_ptr = _create_writer(result_file.encode(), cfg_path_str)
+        
+        _add_listener = dll.nova_simulation_add_listener
+        _add_listener.argtypes = [c_void_p, c_char_p, c_void_p]
+        _add_listener(self.sim, b"csv_writer", writer_ptr)
 
     def __enter__(self):
         return self

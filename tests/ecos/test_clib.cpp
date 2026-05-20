@@ -25,7 +25,7 @@ TEST_CASE("Test C lib")
     auto sim = nova_simulation_create(ss, 0.01);
     REQUIRE(sim);
 
-    REQUIRE(nova_simulation_init(sim, 0.0));
+    REQUIRE(nova_simulation_init(sim, 0.0, nullptr));
 
     double h_start = 0;
     // Check both names for robustness

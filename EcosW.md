@@ -30,15 +30,15 @@
     *   重构 `src/ecos/ssp/` 下的解析逻辑。当读取 `.ssp` 和 `.ssd` 文件时，不再实例化复杂的连接对象，而是将解析出的拓扑关系直接 push 到 `std::vector<DataLink>` 和线性变量表中。
     *   重写 **场景 (Scenario Configuration)** 逻辑。针对 `ScenarioConfig.xsd` 的干预操作，由原有的哈希表查找改为基于新检索算法的变量介入。
 
-### 阶段三：外部 C-API 与 Python 绑定重塑 (5月25日 - 6月14日)
+### 阶段三：外部 C-API 与 Python 绑定重塑 (5月25日 - 5月31日)
 
 针对原 ecos 仿真核心重构，对应 nova 执行内核模块，实现仿真调度，与重构的扁平数据管道适配；重构 nova 的 Python 接口包。
 
 *   **Week 7 (05.18 - 05.24)：全新扁平化 C-API 开发**
     *   针对原 `src/ecos/` 重构实现 `nova_ecos.h/cpp`，替代原来的 `ecos.h`。
     *   对外暴露纯 C 风格的函数（如 `nova_simulation_create`、`nova_simulation_step`），内部调用重写后的 `std::vector` 拓扑管理和 FMI RAII 引擎。
-    *   物理删除项目根目录的 ecospy 文件夹。创建 `nova_sim_py` 包结构。根据设计的 nova_ecos.h，使用 Python ctypes 重新定义 argtypes 和 restype 内存映射关系。
 *   **Week 8 (05.25 - 05.31)：Python面向对象封装与验证**
+    *   物理删除项目根目录的 ecospy 文件夹。创建 `nova_sim_py` 包结构。根据设计的 nova_ecos.h，使用 Python ctypes 重新定义 argtypes 和 restype 内存映射关系。
     *   在 `nova_sim_py `内部开发全新的 Python API（将 EcosSimulationRunner 重写为 NovaExecutionEngine）
     *   完成 Python 侧对模型加载、参数设置、步进调用的纯开发工作。
     *   验证 C++ 内嵌绘图 (Plotter) 的兼容性。确保底层变量读取接口变更后，通过 Python 脚本调用的 matplotlib 绘图功能依然有效。

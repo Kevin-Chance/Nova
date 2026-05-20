@@ -21,6 +21,7 @@ struct NovaDataLink {
     std::string dst_instance;
     std::string dst_variable;
     std::string type;
+    std::function<double(double)> real_modifier; // Added to support real connection modifiers
 };
 
 class simulation

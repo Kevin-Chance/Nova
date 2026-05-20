@@ -73,6 +73,7 @@ std::unique_ptr<simulation> simulation_structure::load(std::unique_ptr<algorithm
         nl.dst_instance = link.dst_instance;
         nl.dst_variable = link.dst_variable;
         nl.type = link.type;
+        nl.real_modifier = link.real_modifier;
         sim->add_link(nl);
     }
 
