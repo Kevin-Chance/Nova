@@ -23,6 +23,7 @@ typedef struct nova_parameter_set_t nova_parameter_set_t;
 typedef struct nova_csv_writer_t nova_csv_writer_t;
 
 NOVA_API nova_simulation_structure_t* nova_simulation_structure_create();
+NOVA_API nova_simulation_structure_t* nova_simulation_structure_load_ssp(const char* ssp_path);
 NOVA_API void nova_simulation_structure_destroy(nova_simulation_structure_t* ss);
 NOVA_API bool nova_simulation_structure_add_model(nova_simulation_structure_t* ss, const char* name, const char* uri);
 NOVA_API void nova_simulation_structure_make_connection(nova_simulation_structure_t* ss, const char* src_inst, const char* src_var, const char* dst_inst, const char* dst_var, const char* type);
@@ -53,6 +54,7 @@ NOVA_API bool nova_simulation_get_real(nova_simulation_t* sim, const char* insta
 NOVA_API bool nova_simulation_set_real(nova_simulation_t* sim, const char* instance, const char* variable, double value);
 
 NOVA_API void nova_library_version(int* major, int* minor, int* patch);
+NOVA_API void nova_set_log_level(const char* level);
 
 #ifdef __cplusplus
 }

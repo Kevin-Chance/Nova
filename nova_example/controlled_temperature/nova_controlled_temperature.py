@@ -1,7 +1,13 @@
-from nova_sim_py import *
-from nova_sim_py.plotter import Plotter, TimeSeriesConfig
 from pathlib import Path
 import os
+import sys
+
+# Add project root to sys.path to import nova_sim_py
+project_root = Path(__file__).parent.parent.parent
+sys.path.append(str(project_root))
+
+from nova_sim_py import *
+from nova_sim_py.plotter import Plotter, TimeSeriesConfig
 
 def kelvin_to_deg(value: float) -> float:
     return value - 273.15
@@ -14,8 +20,9 @@ def main():
     # 定位 FMU (严格对齐原版路径逻辑)
     fmu_path = str((Path(__file__).parent.parent.parent / 'data' / 'fmus' / '2.0' / '20sim' / 'ControlledTemperature.fmu').resolve())
     
-    os.makedirs("results/python", exist_ok=True)
-    result_file = "results/python/nova_controlled_temperature.csv"
+    result_dir = project_root / 'results' / 'python'
+    result_dir.mkdir(parents=True, exist_ok=True)
+    result_file = str(result_dir / "nova_controlled_temperature.csv")
 
     with EcosSimulationStructure() as ss:
         ss.add_model("model", fmu_path)
@@ -24,7 +31,7 @@ def main():
 
             sim.add_csv_writer(result_file)
             sim.init()
-            sim.step_until(40) # 严格对齐原版时长：40秒
+            sim.step_until(10)
             sim.terminate()
 
     # 严格对齐原版绘图配置结构

@@ -1,16 +1,23 @@
 
-from nova_sim_py import *
-from nova_sim_py.plotter import Plotter, TimeSeriesConfig
 from pathlib import Path
 import os
+import sys
+
+# Add project root to sys.path to import nova_sim_py
+project_root = Path(__file__).parent.parent.parent
+sys.path.append(str(project_root))
+
+from nova_sim_py import *
+from nova_sim_py.plotter import Plotter, TimeSeriesConfig
 
 def main():
     EcosLib.set_log_level("debug")
 
-    fmu_folder = (Path(__file__).parent.parent.parent / 'data' / 'fmus' / '1.0' / 'mass_spring_damper').resolve()
+    fmu_folder = (project_root / 'data' / 'fmus' / '1.0' / 'mass_spring_damper').resolve()
     
-    os.makedirs("results/python", exist_ok=True)
-    result_file = "results/python/nova_spring_mass_damper.csv"
+    result_dir = project_root / 'results' / 'python'
+    result_dir.mkdir(parents=True, exist_ok=True)
+    result_file = str(result_dir / "nova_spring_mass_damper.csv")
 
     with EcosSimulationStructure() as ss:
         ss.add_model("damper", f"{fmu_folder}/Damper.fmu")
@@ -27,18 +34,19 @@ def main():
         ss.make_connection("mass", "out_f_u", "damper", "lv_0")
         ss.make_connection("mass", "out_f_w", "damper", "lv_1")
 
+        ss.add_parameter_set("initialValues", {
+            "spring::springStiffness": 5.0,
+            "spring::zeroForceLength": 5.0,
+            "damper::dampingCoefficient": 2.0,
+            "mass::initialPositionX": 6.0,
+            "mass::mediumDensity": 1.0
+        })
+
         with EcosSimulation(structure=ss, step_size=1.0/100) as sim:
 
             sim.add_csv_writer(result_file)
 
-            # Manually setting parameters as add_parameter_set is not yet implemented in Nova's Python wrapper
-            sim.set_real("spring", "springStiffness", 5.0)
-            sim.set_real("spring", "zeroForceLength", 5.0)
-            sim.set_real("damper", "dampingCoefficient", 6.0)
-            sim.set_real("mass", "initialPositionX", 6.0)
-            sim.set_real("mass", "mediumDensity", 1.0)
-
-            sim.init()
+            sim.init(parameter_set="initialValues")
             sim.step_until(80)
             sim.terminate()
 

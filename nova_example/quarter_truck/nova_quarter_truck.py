@@ -20,8 +20,8 @@ def main():
     
     # Use RESULT_FOLDER logic if available, or relative to project root
     # For Python scripts, we'll manually point to the project results folder.
-    result_dir = project_root / 'results'
-    result_dir.mkdir(exist_ok=True)
+    result_dir = project_root / 'results' / 'python'
+    result_dir.mkdir(parents=True, exist_ok=True)
     result_file = str(result_dir / "nova_quarter_truck_py.csv")
 
     # Nova Python API currently requires manual structure building as ssp_path is not in C wrapper
@@ -35,12 +35,12 @@ def main():
         ss.make_connection("wheel", "p.e", "ground", "p.e", "real")
         ss.make_connection("ground", "p.f", "wheel", "p.f", "real")
 
+        ss.add_parameter_set("initialValues", {"chassis::C.mChassis": 400.0})
+
         with NovaSimulation(structure=ss, step_size=1.0 / 100) as sim:
-            sim.add_csv_writer(result_file)
+            sim.add_csv_writer(result_file, str(ssp_dir / "CsvConfig.xml"))
             
-            sim.init()
-            # Set initial values manually as parameter sets are not in C wrapper
-            sim.set_real("chassis", "C.mChassis", 400.0)
+            sim.init(parameter_set="initialValues")
             
             sim.step_until(10)
             sim.terminate()

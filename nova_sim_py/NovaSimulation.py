@@ -1,15 +1,24 @@
 from .lib import dll
 from ctypes import c_void_p, c_double, c_char_p, c_bool, byref, c_int
 
+from .NovaSimulationStructure import NovaSimulationStructure
+
 class NovaSimulation:
-    def __init__(self, structure=None, step_size=0.01, ss=None):
+    def __init__(self, structure=None, step_size=0.01, ss=None, ssp_path=None):
         _create = dll.nova_simulation_create
         _create.restype = c_void_p
         _create.argtypes = [c_void_p, c_double]
         
         actual_ss = structure if structure else ss
+        if not actual_ss and ssp_path:
+            self._ss_internal = NovaSimulationStructure(ssp_path=ssp_path)
+            actual_ss = self._ss_internal
+            
         if not actual_ss:
-            raise Exception("No simulation structure provided")
+            raise Exception("No simulation structure or SSP path provided")
+            
+        if not actual_ss._handle:
+            raise Exception("Simulation structure handle is invalid (perhaps SSP loading failed)")
             
         self.sim = _create(actual_ss._handle, step_size)
         if not self.sim:

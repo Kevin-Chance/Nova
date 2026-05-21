@@ -43,5 +43,6 @@ class EcosLib:
 
     @staticmethod
     def set_log_level(lvl: str):
-        # Implementation in nova_ecos.cpp pending or use direct spdlog if exposed
-        pass
+        _set = dll.nova_set_log_level
+        _set.argtypes = [c_char_p]
+        _set(lvl.encode())

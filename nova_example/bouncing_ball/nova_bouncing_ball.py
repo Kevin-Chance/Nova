@@ -1,7 +1,13 @@
-from nova_sim_py import *
-from nova_sim_py.plotter import Plotter, TimeSeriesConfig
 from pathlib import Path
 import os
+import sys
+
+# Add project root to sys.path to import nova_sim_py
+project_root = Path(__file__).parent.parent.parent
+sys.path.append(str(project_root))
+
+from nova_sim_py import *
+from nova_sim_py.plotter import Plotter, TimeSeriesConfig
 
 def main():
     print(f"Ecoslib version: {EcosLib.version()}")
@@ -10,8 +16,9 @@ def main():
     # 定位 FMU (路径相对于本文件位置调整)
     fmu_path = str((Path(__file__).parent.parent.parent / 'data' / 'fmus' / '3.0' / 'ref' / 'BouncingBall.fmu').resolve())
     
-    os.makedirs("results/python", exist_ok=True)
-    result_file = "results/python/nova_bouncing_ball.csv"
+    result_dir = project_root / 'results' / 'python'
+    result_dir.mkdir(parents=True, exist_ok=True)
+    result_file = str(result_dir / "nova_bouncing_ball.csv")
 
     with EcosSimulationStructure() as ss:
         ss.add_model("ball", fmu_path)

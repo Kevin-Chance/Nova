@@ -28,37 +28,22 @@ def main():
 
     fmu_dir = ssp_dir / 'resources'
 
-    # Note: Nova's Python API doesn't support direct SSP loading yet.
-    # We will simulate the "logic" of loading an SSP by manually defining the structure.
-    with NovaSimulationStructure() as ss:
-        ss.add_model("Reference Generator", str(fmu_dir / "reference_generator.fmu"))
-        ss.add_model("Controller", str(fmu_dir / "controller.fmu"))
-        ss.add_model("Thrust Allocation", str(fmu_dir / "thrust_allocation.fmu"))
-        ss.add_model("Ship", str(fmu_dir / "ship.fmu"))
+    with NovaSimulation(ssp_path=str(ssp_dir), step_size=0.04) as sim:
+        sim.add_csv_writer(result_file, log_config)
+        
+        if not sim.load_scenario(scenario):
+            print("Failed to load scenario.")
 
-        # Add connections based on dp_ship SystemStructure.ssd
-        ss.make_connection("Reference Generator", "q_ref", "Controller", "q_ref", "real")
-        ss.make_connection("Ship", "q", "Controller", "q", "real")
-        ss.make_connection("Ship", "v", "Controller", "v", "real")
-        ss.make_connection("Controller", "tau_c", "Thrust Allocation", "tau_c", "real")
-        ss.make_connection("Thrust Allocation", "u_alloc", "Ship", "u", "real")
+        sim.init()
+        try:
+            print("Press CTRL+C to terminate the simulation.")
+            t = 0
+            while t < 1500:
+                t = sim.step(1)
+        except SystemExit:
+            print(f"Simulation requested to stop at t={t}")
 
-        with NovaSimulation(structure=ss, step_size=0.04) as sim:
-            sim.add_csv_writer(result_file, log_config)
-            
-            if not sim.load_scenario(scenario):
-                print("Failed to load scenario.")
-
-            sim.init()
-            try:
-                print("Press CTRL+C to terminate the simulation.")
-                t = 0
-                while t < 1500:
-                    t = sim.step(1)
-            except SystemExit:
-                print(f"Simulation requested to stop at t={t}")
-
-            sim.terminate()
+        sim.terminate()
 
     print(f"Nova Python dp_ship finished. Results: {result_file}")
 

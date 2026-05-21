@@ -6,6 +6,7 @@
 #include "ecos/logger/logger.hpp"
 #include "ecos/lib_info.hpp"
 #include "ecos/util/plotter.hpp"
+#include "ecos/ssp/ssp_loader.hpp"
 #include <memory>
 #include <map>
 #include <string>
@@ -13,7 +14,7 @@
 using namespace nova_sim;
 
 struct nova_simulation_structure_t {
-    simulation_structure ss;
+    std::unique_ptr<simulation_structure> ss;
 };
 
 struct nova_simulation_t {
@@ -29,7 +30,21 @@ struct nova_csv_writer_t {
 };
 
 extern "C" NOVA_API nova_simulation_structure_t* nova_simulation_structure_create() {
-    return new nova_simulation_structure_t();
+    auto ss = new nova_simulation_structure_t();
+    ss->ss = std::make_unique<simulation_structure>();
+    return ss;
+}
+
+extern "C" NOVA_API nova_simulation_structure_t* nova_simulation_structure_load_ssp(const char* ssp_path) {
+    try {
+        auto ss_ptr = load_ssp(std::filesystem::path(ssp_path));
+        if (!ss_ptr) return nullptr;
+        auto ss = new nova_simulation_structure_t();
+        ss->ss = std::move(ss_ptr);
+        return ss;
+    } catch (...) {
+        return nullptr;
+    }
 }
 
 extern "C" NOVA_API void nova_simulation_structure_destroy(nova_simulation_structure_t* ss) {
@@ -38,7 +53,7 @@ extern "C" NOVA_API void nova_simulation_structure_destroy(nova_simulation_struc
 
 extern "C" NOVA_API bool nova_simulation_structure_add_model(nova_simulation_structure_t* ss, const char* name, const char* uri) {
     try {
-        ss->ss.add_model(name, std::string(uri), std::nullopt);
+        ss->ss->add_model(name, std::string(uri), std::nullopt);
         return true;
     } catch (...) {
         return false;
@@ -47,17 +62,17 @@ extern "C" NOVA_API bool nova_simulation_structure_add_model(nova_simulation_str
 
 extern "C" NOVA_API void nova_simulation_structure_make_connection(nova_simulation_structure_t* ss, const char* src_inst, const char* src_var, const char* dst_inst, const char* dst_var, const char* type) {
     if (std::string(type) == "real")
-        ss->ss.make_connection<double>(variable_identifier(src_inst, src_var), variable_identifier(dst_inst, dst_var));
+        ss->ss->make_connection<double>(variable_identifier(src_inst, src_var), variable_identifier(dst_inst, dst_var));
     else if (std::string(type) == "int")
-        ss->ss.make_connection<int>(variable_identifier(src_inst, src_var), variable_identifier(dst_inst, dst_var));
+        ss->ss->make_connection<int>(variable_identifier(src_inst, src_var), variable_identifier(dst_inst, dst_var));
     else if (std::string(type) == "bool")
-        ss->ss.make_connection<bool>(variable_identifier(src_inst, src_var), variable_identifier(dst_inst, dst_var));
+        ss->ss->make_connection<bool>(variable_identifier(src_inst, src_var), variable_identifier(dst_inst, dst_var));
 }
 
 extern "C" NOVA_API void nova_simulation_structure_make_real_connection_mod(nova_simulation_structure_t* ss, const char* src, const char* dst, nova_real_modifier_t modifier) {
     std::function<double(const double&)> mod_fn;
     if (modifier) mod_fn = modifier;
-    ss->ss.make_connection<double>(src, dst, modifier ? std::make_optional(mod_fn) : std::nullopt);
+    ss->ss->make_connection<double>(src, dst, modifier ? std::make_optional(mod_fn) : std::nullopt);
 }
 
 extern "C" NOVA_API void nova_simulation_structure_make_real_connection(nova_simulation_structure_t* ss, const char* src, const char* dst) {
@@ -77,13 +92,13 @@ extern "C" NOVA_API void nova_parameter_set_destroy(nova_parameter_set_t* pps) {
 }
 
 extern "C" NOVA_API void nova_simulation_structure_add_parameter_set(nova_simulation_structure_t* ss, const char* name, nova_parameter_set_t* pps) {
-    ss->ss.add_parameter_set(std::string(name), pps->params);
+    ss->ss->add_parameter_set(std::string(name), pps->params);
 }
 
 extern "C" NOVA_API nova_simulation_t* nova_simulation_create(nova_simulation_structure_t* ss, double step_size) {
     auto algo = std::make_unique<fixed_step_algorithm>(step_size);
     auto sim = new nova_simulation_t();
-    sim->sim = ss->ss.load(std::move(algo));
+    sim->sim = ss->ss->load(std::move(algo));
     return sim;
 }
 
@@ -183,4 +198,17 @@ extern "C" NOVA_API void nova_library_version(int* major, int* minor, int* patch
     *major = v.major;
     *minor = v.minor;
     *patch = v.patch;
+}
+
+extern "C" NOVA_API void nova_set_log_level(const char* level) {
+    std::string l(level);
+    log::level lvl = log::level::info;
+    if (l == "trace") lvl = log::level::trace;
+    else if (l == "debug") lvl = log::level::debug;
+    else if (l == "info") lvl = log::level::info;
+    else if (l == "warn") lvl = log::level::warn;
+    else if (l == "err" || l == "error") lvl = log::level::err;
+    else if (l == "off") lvl = log::level::off;
+    
+    log::set_logging_level(lvl);
 }
