@@ -59,12 +59,16 @@ bool csv_config::should_log(const std::string& inst, const std::string& var) con
     return false;
 }
 
-csv_writer::csv_writer(const std::string& filename) {
+csv_writer::csv_writer(const std::string& filename) : filename_(filename) {
     std::filesystem::path p(filename);
     if (p.has_parent_path()) {
         std::filesystem::create_directories(p.parent_path());
     }
     file_.open(filename, std::ios::out | std::ios::trunc);
+}
+
+csv_writer::csv_writer(const std::string& filename, const std::string& configPath) : csv_writer(filename) {
+    config_.load(configPath);
 }
 
 void csv_writer::post_init(simulation& sim) {

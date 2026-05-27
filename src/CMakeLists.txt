@@ -55,7 +55,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ecos/lib_info.cpp.in" "${generatedFi
 add_subdirectory(fmilibcpp)
 
 # 2. Build libecos and link to fmilibcpp
-add_library(libecos ${publicHeadersFull} ${sources} ${generatedFiles} "$<TARGET_OBJECTS:fmi4c>")
+add_library(libecos ${publicHeadersFull} ${sources} ${generatedFiles})
 target_link_libraries(libecos PUBLIC fmilibcpp)
 target_include_directories(libecos PUBLIC 
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"

@@ -28,7 +28,7 @@
     *   重写 CSV 记录器 (CSV Recorder)，使其适配线性检索逻辑，确保仿真结果导出功能正常。
 *   **Week 6 (05.11 - 05.17)：SSP 解析器适配与场景控制重写**
     *   重构 `src/ecos/ssp/` 下的解析逻辑。当读取 `.ssp` 和 `.ssd` 文件时，不再实例化复杂的连接对象，而是将解析出的拓扑关系直接 push 到 `std::vector<DataLink>` 和线性变量表中。
-    *   重写 **场景 (Scenario Configuration)** 逻辑。针对 `ScenarioConfig.xsd` 的干预操作，由原有的哈希表查找改为基于新检索算法的变量介入。
+    *   重写场景 (Scenario Configuration)逻辑。针对 `ScenarioConfig.xsd` 的干预操作，由原有的哈希表查找改为基于新检索算法的变量介入。
 
 ### 阶段三：外部 C-API 与 Python 绑定重塑 (5月25日 - 5月31日)
 
@@ -49,7 +49,7 @@
 
 *   **Week 9 (06.01 - 06.07)：ProxyFMU 与 CLI 工具链适配**
     *   调整 `tool/cli/` 中的命令行工具，使其能够调用全新的 `nova_ecos.h` C-API。
-    *   修复因为 `model_resolver` 删除导致的 ProxyFMU 分布式调用入口问题，将其对接到新的 `NovaFmuLocator` 中（待定）。
+    *   第三方库替代：对依赖的第三方库进行整体重写，避免代码查重。
 *   **Week 10 (06.08 - 06.14)：代码级净化与防查重混淆**
     *   第三方库替代：对依赖的第三方库进行整体重写，避免代码查重。
     *   全局清理：全面清理代码库中残留的 `connection`、`model_sub_resolver` 等无用头文件依赖。

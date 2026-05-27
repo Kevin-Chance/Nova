@@ -66,14 +66,6 @@ if (ECOS_WITH_PROXYFMU)
     FetchContent_MakeAvailable(SimpleSocket)
 endif ()
 
-set(FMI4C_BUILD_SHARED OFF)
-FetchContent_Declare(
-        fmi4c
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/fmi4c
-)
-FetchContent_MakeAvailable(fmi4c)
-
-
 # ==============================================================================
 # Targets
 # ==============================================================================

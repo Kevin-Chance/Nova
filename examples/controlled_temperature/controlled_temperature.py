@@ -1,5 +1,5 @@
-from ecospy import *
-from ecospy.plotter import *
+from nova_sim_py import *
+from nova_sim_py.plotter import *
 
 from pathlib import Path
 

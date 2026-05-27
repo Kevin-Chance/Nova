@@ -33,13 +33,12 @@ def main():
             
             sim.terminate()
 
-    # 模仿原版 Plotter 配置
     config = TimeSeriesConfig(
-        title="Nova BouncingBall",
+        title="BouncingBall",
         y_label="Height[m]",
         identifiers=["ball::h"])
-    # plotter = Plotter(result_file, config)
-    # plotter.show() 
+    plotter = Plotter(result_file, config)
+    plotter.show() 
 
     print(f"Nova Python BouncingBall finished. Results: {result_file}")
 

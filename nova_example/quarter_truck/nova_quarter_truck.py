@@ -47,5 +47,23 @@ def main():
 
     print(f"Nova Python Quarter-Truck finished. Results: {result_file}")
 
+    from nova_sim_py.plotter import Plotter, TimeSeriesConfig
+    configs = [
+        TimeSeriesConfig(
+            title="Quarter-truck",
+            y_label="Height[m]",
+            identifiers=["chassis::zChassis"]),
+        TimeSeriesConfig(
+            title="Quarter-truck",
+            y_label="Height[m]",
+            identifiers=["wheel::zWheel"]),
+        TimeSeriesConfig(
+            title="Quarter-truck",
+            y_label="Height[m]",
+            identifiers=["ground::zGround"])
+    ]
+    plotter = Plotter(result_file, configs)
+    plotter.show()
+
 if __name__ == "__main__":
     main()

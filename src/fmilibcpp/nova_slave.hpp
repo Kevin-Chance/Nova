@@ -44,33 +44,37 @@ public:
     NovaSlave(std::string name, model_description desc, std::shared_ptr<NovaFmiLibrary> lib)
         : instanceName(std::move(name)), md(std::move(desc)), lib_(std::move(lib)) {}
 
-    bool enter_initialization_mode(double start = 0, double stop = 0, double tol = 0) {
+    virtual ~NovaSlave() = default;
+
+    virtual const model_description& get_model_description() const { return md; }
+
+    virtual bool enter_initialization_mode(double start = 0, double stop = 0, double tol = 0) {
         return fmi.enter_init ? fmi.enter_init(component_.get(), start, stop, tol) : false;
     }
-    bool exit_initialization_mode() { return fmi.exit_init ? fmi.exit_init(component_.get()) : false; }
-    bool step(double t, double dt) { return fmi.step ? fmi.step(component_.get(), t, dt) : false; }
-    bool terminate() { return fmi.terminate ? fmi.terminate(component_.get()) : false; }
-    bool reset() { return fmi.reset ? fmi.reset(component_.get()) : false; }
-    void freeInstance() { component_.reset(); }
+    virtual bool exit_initialization_mode() { return fmi.exit_init ? fmi.exit_init(component_.get()) : false; }
+    virtual bool step(double t, double dt) { return fmi.step ? fmi.step(component_.get(), t, dt) : false; }
+    virtual bool terminate() { return fmi.terminate ? fmi.terminate(component_.get()) : false; }
+    virtual bool reset() { return fmi.reset ? fmi.reset(component_.get()) : false; }
+    virtual void freeInstance() { component_.reset(); }
 
-    void* get_state() { return fmi.get_state ? fmi.get_state(component_.get()) : nullptr; }
-    bool set_state(void* state) { return fmi.set_state ? fmi.set_state(component_.get(), state) : false; }
-    bool free_state(void* state) { return fmi.free_state ? fmi.free_state(component_.get(), state) : false; }
+    virtual void* get_state() { return fmi.get_state ? fmi.get_state(component_.get()) : nullptr; }
+    virtual bool set_state(void* state) { return fmi.set_state ? fmi.set_state(component_.get(), state) : false; }
+    virtual bool free_state(void* state) { return fmi.free_state ? fmi.free_state(component_.get(), state) : false; }
 
     // Batch interfaces
-    bool get_real(const std::vector<value_ref>& vr, std::vector<double>& values) {
+    virtual bool get_real(const std::vector<value_ref>& vr, std::vector<double>& values) {
         return fmi.get_real ? fmi.get_real(component_.get(), vr.data(), vr.size(), values.data()) : false;
     }
-    bool set_real(const std::vector<value_ref>& vr, const std::vector<double>& values) {
+    virtual bool set_real(const std::vector<value_ref>& vr, const std::vector<double>& values) {
         return fmi.set_real ? fmi.set_real(component_.get(), vr.data(), vr.size(), values.data()) : false;
     }
-    bool get_integer(const std::vector<value_ref>& vr, std::vector<int>& values) {
-        return fmi.get_int ? fmi.get_int(component_.get(), vr.data(), vr.size(), (int32_t*)values.data()) : false;
+    virtual bool get_integer(const std::vector<value_ref>& vr, std::vector<int32_t>& values) {
+        return fmi.get_int ? fmi.get_int(component_.get(), vr.data(), vr.size(), values.data()) : false;
     }
-    bool set_integer(const std::vector<value_ref>& vr, const std::vector<int>& values) {
-        return fmi.set_int ? fmi.set_int(component_.get(), vr.data(), vr.size(), (const int32_t*)values.data()) : false;
+    virtual bool set_integer(const std::vector<value_ref>& vr, const std::vector<int32_t>& values) {
+        return fmi.set_int ? fmi.set_int(component_.get(), vr.data(), vr.size(), values.data()) : false;
     }
-    bool get_boolean(const std::vector<value_ref>& vr, std::vector<bool>& values) {
+    virtual bool get_boolean(const std::vector<value_ref>& vr, std::vector<bool>& values) {
         if (!fmi.get_bool) return false;
         std::vector<int> tmp(vr.size());
         if (fmi.get_bool(component_.get(), vr.data(), vr.size(), tmp.data())) {
@@ -80,13 +84,13 @@ public:
         }
         return false;
     }
-    bool set_boolean(const std::vector<value_ref>& vr, const std::vector<bool>& values) {
+    virtual bool set_boolean(const std::vector<value_ref>& vr, const std::vector<bool>& values) {
         if (!fmi.set_bool) return false;
         std::vector<int> tmp;
         for (bool v : values) tmp.push_back(v ? 1 : 0);
         return fmi.set_bool(component_.get(), vr.data(), vr.size(), tmp.data());
     }
-    bool get_string(const std::vector<value_ref>& vr, std::vector<std::string>& values) {
+    virtual bool get_string(const std::vector<value_ref>& vr, std::vector<std::string>& values) {
         std::vector<char*> ptrs(vr.size());
         if (fmi.get_str && fmi.get_str(component_.get(), vr.data(), vr.size(), ptrs.data())) {
             for(size_t i=0; i<vr.size(); ++i) values[i] = ptrs[i];
@@ -94,7 +98,7 @@ public:
         }
         return false;
     }
-    bool set_string(const std::vector<value_ref>& vr, const std::vector<std::string>& values) {
+    virtual bool set_string(const std::vector<value_ref>& vr, const std::vector<std::string>& values) {
         std::vector<const char*> ptrs(vr.size());
         for(size_t i=0; i<vr.size(); ++i) ptrs[i] = values[i].c_str();
         return fmi.set_str ? fmi.set_str(component_.get(), vr.data(), vr.size(), ptrs.data()) : false;

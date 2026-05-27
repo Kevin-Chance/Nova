@@ -31,8 +31,10 @@ class csv_writer : public simulation_listener
 {
 public:
     explicit csv_writer(const std::string& filename);
+    csv_writer(const std::string& filename, const std::string& configPath);
 
     csv_config& config() { return config_; }
+    std::string output_path() const { return filename_; }
 
     void post_init(simulation& sim) override;
     void post_step(simulation& sim) override;
@@ -42,6 +44,7 @@ private:
     void write_header(const simulation& sim);
     void write_row(const simulation& sim);
 
+    std::string filename_;
     std::ofstream file_;
     csv_config config_;
     bool header_written_ = false;

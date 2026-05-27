@@ -18,8 +18,7 @@ target_include_directories(proxyfmu
         "${THIRD_PARTY_INCLUDE_DIR}/subprocess"
         "${GENERATED_SRC_DIR}")
 target_link_libraries(proxyfmu
-        PRIVATE
-        fmi4c
+    PRIVATE
         simple_socket
         subprocess
         "$<TARGET_OBJECTS:fmilibcpp>"

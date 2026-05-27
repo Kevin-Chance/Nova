@@ -1,4 +1,3 @@
-
 #include "smd_common.hpp"
 
 int main()

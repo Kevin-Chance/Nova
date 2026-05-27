@@ -34,7 +34,6 @@ def main():
             sim.step_until(10)
             sim.terminate()
 
-    # 严格对齐原版绘图配置结构
     config = TimeSeriesConfig(
         title="ControlledTemperature",
         y_label="Temperature[deg]",
@@ -44,9 +43,8 @@ def main():
             "model::Temperature_Room" : kelvin_to_deg
         }
     )
-    
-    # plotter = Plotter(result_file, config)
-    # plotter.show()
+    plotter = Plotter(result_file, config)
+    plotter.show()
     
     print(f"Nova Python ControlledTemperature finished. Results: {result_file}")
 

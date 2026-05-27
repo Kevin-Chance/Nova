@@ -5,10 +5,8 @@
 #include "util/temp_dir.hpp"
 #include "util/unzipper.hpp"
 #include "ecos/logger/logger.hpp"
-#include "fmicontext.hpp"
 #include "nova_fmi_library.hpp"
 
-#include <fmi4c.h>
 #include <pugixml.hpp>
 #include <iostream>
 
@@ -61,14 +59,33 @@ std::unique_ptr<fmu> loadFmu(const std::filesystem::path& fmuPath, bool fmiLoggi
         // FMI 3.0 Variables
         for (auto var : vars_node.children()) {
             std::string nodeName = var.name();
-            if (nodeName == "Float64" || nodeName == "Float32" || nodeName == "Int32" || nodeName == "Int64" || nodeName == "Boolean" || nodeName == "String") {
+            if (nodeName == "Float64" || nodeName == "Float32" || nodeName == "Int32" || nodeName == "Int64" || 
+                nodeName == "Boolean" || nodeName == "String" || nodeName == "Binary" || nodeName == "Clock") {
                 scalar_variable sv;
                 sv.name = var.attribute("name").as_string();
                 sv.vr = var.attribute("valueReference").as_uint();
-                if (nodeName.find("Float") != std::string::npos) sv.typeAttributes = real_attributes{};
-                else if (nodeName.find("Int") != std::string::npos) sv.typeAttributes = integer_attributes{};
-                else if (nodeName == "Boolean") sv.typeAttributes = boolean_attributes{};
-                else if (nodeName == "String") sv.typeAttributes = string_attributes{};
+                sv.causality = var.attribute("causality").as_string();
+                sv.variability = var.attribute("variability").as_string();
+                sv.initial = var.attribute("initial").as_string();
+                sv.description = var.attribute("description").as_string();
+
+                if (nodeName.find("Float") != std::string::npos) {
+                    real_attributes attrs;
+                    if (var.attribute("start")) attrs.start = var.attribute("start").as_double();
+                    sv.typeAttributes = attrs;
+                } else if (nodeName.find("Int") != std::string::npos || nodeName == "UInt64") {
+                    integer_attributes attrs;
+                    if (var.attribute("start")) attrs.start = var.attribute("start").as_int();
+                    sv.typeAttributes = attrs;
+                } else if (nodeName == "Boolean") {
+                    boolean_attributes attrs;
+                    if (var.attribute("start")) attrs.start = var.attribute("start").as_bool();
+                    sv.typeAttributes = attrs;
+                } else if (nodeName == "String") {
+                    string_attributes attrs;
+                    if (var.attribute("start")) attrs.start = var.attribute("start").as_string();
+                    sv.typeAttributes = attrs;
+                }
                 variables.push_back(std::move(sv));
             }
         }
@@ -78,10 +95,28 @@ std::unique_ptr<fmu> loadFmu(const std::filesystem::path& fmuPath, bool fmiLoggi
             scalar_variable sv;
             sv.name = var.attribute("name").as_string();
             sv.vr = var.attribute("valueReference").as_uint();
-            if (var.child("Real")) sv.typeAttributes = real_attributes{};
-            else if (var.child("Integer")) sv.typeAttributes = integer_attributes{};
-            else if (var.child("Boolean")) sv.typeAttributes = boolean_attributes{};
-            else if (var.child("String")) sv.typeAttributes = string_attributes{};
+            sv.causality = var.attribute("causality").as_string();
+            sv.variability = var.attribute("variability").as_string();
+            sv.initial = var.attribute("initial").as_string();
+            sv.description = var.attribute("description").as_string();
+
+            if (auto type = var.child("Real")) {
+                real_attributes attrs;
+                if (type.attribute("start")) attrs.start = type.attribute("start").as_double();
+                sv.typeAttributes = attrs;
+            } else if (auto type = var.child("Integer")) {
+                integer_attributes attrs;
+                if (type.attribute("start")) attrs.start = type.attribute("start").as_int();
+                sv.typeAttributes = attrs;
+            } else if (auto type = var.child("Boolean")) {
+                boolean_attributes attrs;
+                if (type.attribute("start")) attrs.start = type.attribute("start").as_bool();
+                sv.typeAttributes = attrs;
+            } else if (auto type = var.child("String")) {
+                string_attributes attrs;
+                if (type.attribute("start")) attrs.start = type.attribute("start").as_string();
+                sv.typeAttributes = attrs;
+            }
             variables.push_back(std::move(sv));
         }
     }

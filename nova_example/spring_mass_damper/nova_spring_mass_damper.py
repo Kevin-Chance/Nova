@@ -51,11 +51,11 @@ def main():
             sim.terminate()
 
     config = TimeSeriesConfig(
-        title="Nova Mass-spring-damper",
+        title="Mass-spring-damper",
         y_label="Height[m]",
         identifiers=["mass::out_l_u"])
-    # plotter = Plotter(result_file, config)
-    # plotter.show()
+    plotter = Plotter(result_file, config)
+    plotter.show()
     print(f"Nova Python Spring-Mass-Damper finished. Results: {result_file}")
 
 

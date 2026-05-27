@@ -21,6 +21,7 @@ int main()
 
         std::filesystem::create_directories(RESULT_FOLDER);
         auto csvWriter = std::make_unique<csv_writer>(std::string(RESULT_FOLDER) + "/nova_quarter_truck_ssp.csv");
+        const auto outputPath = csvWriter->output_path();
         
         csv_config& config = csvWriter->config();
         config.register_variable("chassis::zChassis");
@@ -35,7 +36,7 @@ int main()
 
         sim->terminate();
 
-        // plot_csv(outputPath, sspFolder / "ChartConfig.xml");
+        plot_csv(outputPath, sspFolder / "ChartConfig.xml");
     } catch (const std::exception& ex) {
 
         log::err(ex.what());

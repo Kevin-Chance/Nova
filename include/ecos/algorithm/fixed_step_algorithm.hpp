@@ -4,6 +4,7 @@
 #include "ecos/algorithm/algorithm.hpp"
 #include "ecos/model_instance.hpp"
 #include <vector>
+#include <memory>
 
 namespace nova_sim
 {
@@ -11,7 +12,8 @@ namespace nova_sim
 class fixed_step_algorithm : public algorithm
 {
 public:
-    explicit fixed_step_algorithm(double baseStepSize);
+    explicit fixed_step_algorithm(double baseStepSize, bool parallel = true);
+    ~fixed_step_algorithm() override;
 
     void initialize(double startTime) override;
     double step(double currentTime, simulation& sim) override;
@@ -19,12 +21,8 @@ public:
     void model_instance_added(model_instance* instance);
 
 private:
-    double baseStepSize_;
-    struct instance_wrapper {
-        model_instance* instance;
-        int decimationFactor;
-    };
-    std::vector<instance_wrapper> instances_;
+    class impl;
+    std::unique_ptr<impl> pimpl_;
 };
 
 } // namespace nova_sim

@@ -6,6 +6,7 @@
 #include "ecos/algorithm/fixed_step_algorithm.hpp"
 #include "ecos/listeners/csv_writer.hpp"
 #include "ecos/logger/logger.hpp"
+#include "ecos/util/plotter.hpp"
 #include <filesystem>
 
 using namespace nova_sim;
@@ -49,6 +50,7 @@ inline int run(const std::filesystem::path& fmuPath, bool remoting)
 // 5. 配置 CSV 监听器 (现在支持自动全量记录)
 std::filesystem::create_directories(RESULT_FOLDER);
 auto csvWriter = std::make_unique<csv_writer>(std::string(RESULT_FOLDER) + "/nova_controlled_temperature.csv");
+const auto outputPath = csvWriter->output_path();
 sim->add_listener("csv_writer", std::move(csvWriter));
 
         // 6. 执行仿真 (10s, 使用新实现的 step_for)
@@ -58,6 +60,8 @@ sim->add_listener("csv_writer", std::move(csvWriter));
         sim->terminate();
 
         log::info("Nova simulation finished. Output: {}/nova_controlled_temperature.csv", RESULT_FOLDER);
+
+        plot_csv(outputPath, std::string(DATA_FOLDER) + "/fmus/2.0/20sim/ChartConfig.xml");
 
     } catch (const std::exception& ex) {
         log::err(ex.what());

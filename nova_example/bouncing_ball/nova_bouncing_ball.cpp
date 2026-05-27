@@ -3,6 +3,7 @@
 #include <ecos/algorithm/fixed_step_algorithm.hpp>
 #include <ecos/listeners/csv_writer.hpp>
 #include <ecos/logger/logger.hpp>
+#include <ecos/util/plotter.hpp>
 #include <filesystem>
 
 using namespace nova_sim;
@@ -24,6 +25,7 @@ int main()
     const auto sim = ss.load(std::move(algo));
 
     auto csvWriter = std::make_unique<csv_writer>(resultFile);
+    const auto outputPath = csvWriter->output_path();
     csv_config& config = csvWriter->config();
     config.register_variable("ball::h");
 
@@ -34,6 +36,14 @@ int main()
     sim->terminate();
 
     log::info("Nova C++ BouncingBall finished.");
+
+    TChartConfig plotConfig;
+    plotConfig.addChart(TTimeSeriesChart{
+        "bouncing_ball",
+        "Time[s]",
+        {{{"ball", {{"h"}}}}}});
+
+    plot_csv(outputPath, plotConfig);
 
     return 0;
 }

@@ -33,6 +33,7 @@ int main()
 
         std::filesystem::create_directories(RESULT_FOLDER);
         auto csvWriter = std::make_unique<csv_writer>(std::string(RESULT_FOLDER) + "/nova_quarter_truck_with_config.csv");
+        const auto outputPath = csvWriter->output_path();
         
         csv_config& config = csvWriter->config();
         config.load(sspDir / "CsvConfig.xml");
@@ -45,6 +46,8 @@ int main()
         sim->terminate();
 
         log::info("Nova C++ Quarter-Truck finished. Results: {}/nova_quarter_truck_with_config.csv", RESULT_FOLDER);
+
+        plot_csv(outputPath, sspDir / "ChartConfig.xml");
 
     } catch (const std::exception& ex) {
 

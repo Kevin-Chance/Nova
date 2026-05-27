@@ -7,6 +7,7 @@
 #include "ecos/simulation.hpp"
 #include "ecos/structure/simulation_structure.hpp"
 #include "ecos/listeners/csv_writer.hpp"
+#include "ecos/util/plotter.hpp"
 #include <filesystem>
 #include <map>
 
@@ -45,6 +46,7 @@ inline void run(simulation_structure& ss)
         
         std::filesystem::create_directories(RESULT_FOLDER);
         auto csvWriter = std::make_unique<csv_writer>(std::string(RESULT_FOLDER) + "/nova_spring_mass_damper.csv");
+        const auto outputPath = csvWriter->output_path();
         sim->add_listener("csv_writer", std::move(csvWriter));
 
         sim->init("initialValues");
@@ -54,6 +56,8 @@ inline void run(simulation_structure& ss)
         sim->terminate();
 
         log::info("Nova C++ Spring-Mass-Damper finished. Results: {}/nova_spring_mass_damper.csv", RESULT_FOLDER);
+
+        plot_csv(outputPath, std::string(DATA_FOLDER) + "/fmus/1.0/mass_spring_damper/ChartConfig.xml");
 
     } catch (const std::exception& ex) {
 
