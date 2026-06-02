@@ -7,13 +7,13 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
-from nova_sim_py import NovaSimulation, NovaSimulationStructure, EcosLib
+from nova_sim_py import NovaSimulation, NovaSimulationStructure, NovaLib
 
 def main():
-    print(f"Nova Ecoslib version: {EcosLib.version()}")
+    print(f"NovaLib version: {NovaLib.version()}")
 
     # Note: set_log_level is currently a no-op in Nova's Python lib.py
-    EcosLib.set_log_level("debug")
+    NovaLib.set_log_level("debug")
 
     ssp_dir = (project_root / 'data' / 'ssp' / '1.0' / 'quarter_truck').resolve()
     fmu_dir = ssp_dir / 'resources'

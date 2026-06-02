@@ -7,6 +7,7 @@
 #include "ecos/lib_info.hpp"
 #include "ecos/util/plotter.hpp"
 #include "ecos/ssp/ssp_loader.hpp"
+#include "ecos/simulation_runner.hpp"
 #include <memory>
 #include <map>
 #include <string>
@@ -27,6 +28,10 @@ struct nova_parameter_set_t {
 
 struct nova_csv_writer_t {
     std::shared_ptr<csv_writer> writer;
+};
+
+struct nova_simulation_runner_t {
+    std::unique_ptr<simulation_runner> runner;
 };
 
 extern "C" NOVA_API nova_simulation_structure_t* nova_simulation_structure_create() {
@@ -85,6 +90,18 @@ extern "C" NOVA_API nova_parameter_set_t* nova_parameter_set_create() {
 
 extern "C" NOVA_API void nova_parameter_set_add_real(nova_parameter_set_t* pps, const char* name, double value) {
     pps->params[variable_identifier(name)] = value;
+}
+
+extern "C" NOVA_API void nova_parameter_set_add_int(nova_parameter_set_t* pps, const char* name, int value) {
+    pps->params[variable_identifier(name)] = value;
+}
+
+extern "C" NOVA_API void nova_parameter_set_add_bool(nova_parameter_set_t* pps, const char* name, bool value) {
+    pps->params[variable_identifier(name)] = value;
+}
+
+extern "C" NOVA_API void nova_parameter_set_add_string(nova_parameter_set_t* pps, const char* name, const char* value) {
+    pps->params[variable_identifier(name)] = std::string(value);
 }
 
 extern "C" NOVA_API void nova_parameter_set_destroy(nova_parameter_set_t* pps) {
@@ -211,4 +228,26 @@ extern "C" NOVA_API void nova_set_log_level(const char* level) {
     else if (l == "off") lvl = log::level::off;
     
     log::set_logging_level(lvl);
+}
+
+extern "C" NOVA_API nova_simulation_runner_t* nova_simulation_runner_create(nova_simulation_t* sim) {
+    auto runner = new nova_simulation_runner_t();
+    runner->runner = std::make_unique<simulation_runner>(*sim->sim);
+    return runner;
+}
+
+extern "C" NOVA_API void nova_simulation_runner_start(nova_simulation_runner_t* runner) {
+    runner->runner->start();
+}
+
+extern "C" NOVA_API void nova_simulation_runner_stop(nova_simulation_runner_t* runner) {
+    runner->runner->stop();
+}
+
+extern "C" NOVA_API void nova_simulation_runner_set_real_time_factor(nova_simulation_runner_t* runner, double factor) {
+    runner->runner->set_real_time_factor(factor);
+}
+
+extern "C" NOVA_API void nova_simulation_runner_destroy(nova_simulation_runner_t* runner) {
+    delete runner;
 }

@@ -7,7 +7,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
-from nova_sim_py import NovaSimulation, NovaSimulationStructure, EcosLib
+from nova_sim_py import NovaSimulation, NovaSimulationStructure, NovaLib
 
 def signal_handler(sig, frame):
     print("\nSimulation interrupted by user (CTRL+C).")
@@ -15,8 +15,8 @@ def signal_handler(sig, frame):
 
 def main():
     signal.signal(signal.SIGINT, signal_handler)
-    print(f"Nova Ecoslib version: {EcosLib.version()}")
-    EcosLib.set_log_level("debug")
+    print(f"NovaLib version: {NovaLib.version()}")
+    NovaLib.set_log_level("debug")
 
     ssp_dir = (project_root / 'data' / 'ssp' / '1.0' / 'dp_ship').resolve()
     log_config = str(ssp_dir / "CsvConfig.xml")

@@ -1,4 +1,4 @@
-from .lib import dll, EcosLib
+from .lib import dll, NovaLib
 from .NovaSimulation import NovaSimulation
 
 from ctypes import c_void_p, c_double
@@ -8,26 +8,26 @@ class NovaExecutionEngine:
 
     def __init__(self, sim: NovaSimulation):
 
-        _simulation_runner_create = dll.ecos_simulation_runner_create
+        _simulation_runner_create = dll.nova_simulation_runner_create
         _simulation_runner_create.restype = c_void_p
         _simulation_runner_create.argtypes = [c_void_p]
 
         self._handle = _simulation_runner_create(sim.sim)
         if self._handle is None:
-            raise Exception(EcosLib.get_last_error())
+            raise Exception("Failed to create NovaExecutionEngine")
 
     def start(self):
-        _simulation_runner_start = dll.ecos_simulation_runner_start
+        _simulation_runner_start = dll.nova_simulation_runner_start
         _simulation_runner_start.argtypes = [c_void_p]
         _simulation_runner_start(self._handle)
 
     def stop(self):
-        _simulation_runner_stop = dll.ecos_simulation_runner_stop
+        _simulation_runner_stop = dll.nova_simulation_runner_stop
         _simulation_runner_stop.argtypes = [c_void_p]
         _simulation_runner_stop(self._handle)
 
     def set_real_time_factor(self, factor: float):
-        _simulation_runner_set_real_time_factor = dll.ecos_simulation_runner_set_real_time_factor
+        _simulation_runner_set_real_time_factor = dll.nova_simulation_runner_set_real_time_factor
         _simulation_runner_set_real_time_factor.argtypes = [c_void_p, c_double]
         _simulation_runner_set_real_time_factor(self._handle, factor)
 
@@ -39,7 +39,7 @@ class NovaExecutionEngine:
 
     def free(self):
         if not self._handle is None:
-            destroy_simulation_runner = dll.ecos_simulation_runner_destroy
+            destroy_simulation_runner = dll.nova_simulation_runner_destroy
             destroy_simulation_runner.argtypes = [c_void_p]
             destroy_simulation_runner(self._handle)
             self._handle = None

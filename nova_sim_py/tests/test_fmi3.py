@@ -1,7 +1,7 @@
 import pytest
 
 from pathlib import Path
-from nova_simpy import EcosLib, NovaSimulationStructure, NovaSimulation
+from nova_sim_py import NovaLib, NovaSimulationStructure, NovaSimulation
 
 fmi3_folder = (Path(__file__).parent.parent.parent / 'data' / 'fmus' / '3.0').resolve()
 fmu_files = list(fmi3_folder.rglob("*.fmu"))
@@ -10,7 +10,7 @@ fmu_files = list(fmi3_folder.rglob("*.fmu"))
 @pytest.mark.parametrize("fmu_path", fmu_files, ids=lambda p: p.relative_to(fmi3_folder))
 @pytest.mark.parametrize("use_proxy", [False, True], ids=["direct", "proxy"])
 def test_fmi3(fmu_path: Path, use_proxy: bool):
-    EcosLib.set_log_level("debug")
+    NovaLib.set_log_level("debug")
 
     try:
         with NovaSimulationStructure() as ss:

@@ -11,7 +11,7 @@ from nova_sim_py import *
 from nova_sim_py.plotter import Plotter, TimeSeriesConfig
 
 def main():
-    EcosLib.set_log_level("debug")
+    NovaLib.set_log_level("debug")
 
     fmu_folder = (project_root / 'data' / 'fmus' / '1.0' / 'mass_spring_damper').resolve()
     
@@ -19,7 +19,7 @@ def main():
     result_dir.mkdir(parents=True, exist_ok=True)
     result_file = str(result_dir / "nova_spring_mass_damper.csv")
 
-    with EcosSimulationStructure() as ss:
+    with NovaSimulationStructure() as ss:
         ss.add_model("damper", f"{fmu_folder}/Damper.fmu")
         ss.add_model("mass", f"{fmu_folder}/Mass.fmu")
         ss.add_model("spring", f"{fmu_folder}/Spring.fmu")
@@ -42,7 +42,7 @@ def main():
             "mass::mediumDensity": 1.0
         })
 
-        with EcosSimulation(structure=ss, step_size=1.0/100) as sim:
+        with NovaSimulation(structure=ss, step_size=1.0/100) as sim:
 
             sim.add_csv_writer(result_file)
 

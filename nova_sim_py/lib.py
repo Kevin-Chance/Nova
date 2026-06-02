@@ -27,7 +27,7 @@ class Version(Structure):
         return f"v{self.major}.{self.minor}.{self.patch}"
 
 
-class EcosLib:
+class NovaLib:
 
     @staticmethod
     def version():

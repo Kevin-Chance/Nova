@@ -1,28 +1,28 @@
 from ctypes import c_void_p, c_char_p, c_int, c_bool, c_double
 
-from .lib import dll, EcosLib
+from .lib import dll, NovaLib
 
 
 class NovaParameterSet:
 
     def __init__(self):
-        self._parameter_set_add_int = dll.ecos_parameter_set_add_int
+        self._parameter_set_add_int = dll.nova_parameter_set_add_int
         self._parameter_set_add_int.argtypes = [c_void_p, c_char_p, c_int]
 
-        self._parameter_set_add_real = dll.ecos_parameter_set_add_real
+        self._parameter_set_add_real = dll.nova_parameter_set_add_real
         self._parameter_set_add_real.argtypes = [c_void_p, c_char_p, c_double]
 
-        self._parameter_set_add_string = dll.ecos_parameter_set_add_string
+        self._parameter_set_add_string = dll.nova_parameter_set_add_string
         self._parameter_set_add_string.argtypes = [c_void_p, c_char_p, c_char_p]
 
-        self._parameter_set_add_bool = dll.ecos_parameter_set_add_bool
+        self._parameter_set_add_bool = dll.nova_parameter_set_add_bool
         self._parameter_set_add_bool.argtypes = [c_void_p, c_char_p, c_bool]
 
-        create_parameter_set = dll.ecos_parameter_set_create
+        create_parameter_set = dll.nova_parameter_set_create
         create_parameter_set.restype = c_void_p
         self._handle = create_parameter_set()
         if self._handle is None:
-            raise Exception(EcosLib.get_last_error())
+            raise Exception("Failed to create NovaParameterSet")
 
     def add_int(self, name: str, value: int):
         self._parameter_set_add_int(self.handle, name.encode(), value)
@@ -42,7 +42,7 @@ class NovaParameterSet:
 
     def free(self):
         if not self._handle is None:
-            destroy_parameter_set = dll.ecos_parameter_set_destroy
+            destroy_parameter_set = dll.nova_parameter_set_destroy
             destroy_parameter_set.argtypes = [c_void_p]
 
             destroy_parameter_set(self._handle)
