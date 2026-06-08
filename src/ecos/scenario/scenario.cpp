@@ -1,5 +1,5 @@
 #include "ecos/scenario/scenario.hpp"
-#include <pugixml.hpp>
+#include "ecos/util/nova_xml.hpp"
 #include <iostream>
 
 namespace nova_sim {
@@ -50,9 +50,9 @@ void scenario::load(const std::filesystem::path& config, std::vector<std::unique
         throw std::runtime_error("Wrong config extension. Was " + ext + ", expected " + ".xml");
     }
 
-    pugi::xml_document doc;
-    if (pugi::xml_parse_result result = doc.load_file(config.c_str()); !result) {
-        throw std::runtime_error("Unable to parse '" + std::filesystem::absolute(config).string() + "': " + result.description());
+    xml::XmlDocument doc;
+    if (!doc.load_file(config.string().c_str())) {
+        throw std::runtime_error("Unable to parse '" + std::filesystem::absolute(config).string() + "'");
     }
 
     const auto root = doc.child("ecos:Scenario");
@@ -65,7 +65,7 @@ void scenario::load(const std::filesystem::path& config, std::vector<std::unique
         for (const auto& variable : action) {
             variable_identifier id = variable.attribute("id").as_string();
 
-            pugi::xml_node var;
+            xml::XmlNode var;
             if ((var = variable.child("ecos:real"))) {
                 const double value = var.attribute("value").as_double();
                 invoke_at(timed_action(t, [id, value, &instances]() {

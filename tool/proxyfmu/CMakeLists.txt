@@ -12,7 +12,6 @@ target_include_directories(proxyfmu
         "${CMAKE_CURRENT_SOURCE_DIR}"
         "${PROJECT_SOURCE_DIR}/include"
         "${PROJECT_SOURCE_DIR}/src"
-        "${PROJECT_SOURCE_DIR}/src/external/spdlog"
         "${PROJECT_SOURCE_DIR}/src/external/flatbuffers"
         "${THIRD_PARTY_INCLUDE_DIR}"
         "${THIRD_PARTY_INCLUDE_DIR}/subprocess"

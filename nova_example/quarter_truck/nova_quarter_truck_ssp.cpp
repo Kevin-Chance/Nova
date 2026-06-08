@@ -5,8 +5,6 @@
 #include "ecos/ssp/ssp_loader.hpp"
 #include "ecos/util/plotter.hpp"
 
-#include <spdlog/stopwatch.h>
-
 using namespace nova_sim;
 
 int main()
@@ -29,10 +27,10 @@ int main()
         config.register_variable("ground::zGround");
         sim->add_listener("csv_writer", std::move(csvWriter));
 
-        spdlog::stopwatch sw;
+        log::Stopwatch sw;
         sim->init("initialValues");
         sim->step_until(5);
-        log::info("Nova SSP Quarter-Truck finished. Elapsed {:.4f}s", sw);
+        log::info("Nova SSP Quarter-Truck finished. Elapsed {}s", sw.elapsed().count());
 
         sim->terminate();
 

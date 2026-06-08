@@ -2,53 +2,43 @@
 #ifndef LIBECOS_LOGGER_HPP
 #define LIBECOS_LOGGER_HPP
 
-#include <spdlog/fmt/fmt.h>
+#include "ecos/logger/nova_logger.hpp"
 
 namespace nova_sim::log
 {
-
-enum class level : int
-{
-    trace,
-    debug,
-    info,
-    warn,
-    err,
-    off
-};
 
 void set_logging_level(level lvl);
 
 void log(level lvl, std::string_view msg);
 
 template<typename... Args>
-void trace(fmt::format_string<Args...> fmt, Args&&... args)
+void trace(std::string_view fmt, Args&&... args)
 {
-    log(level::trace, fmt::format(fmt, std::forward<Args>(args)...));
+    log(level::trace, format(fmt, std::forward<Args>(args)...));
 }
 
 template<typename... Args>
-void debug(fmt::format_string<Args...> fmt, Args&&... args)
+void debug(std::string_view fmt, Args&&... args)
 {
-    log(level::debug, fmt::format(fmt, std::forward<Args>(args)...));
+    log(level::debug, format(fmt, std::forward<Args>(args)...));
 }
 
 template<typename... Args>
-void info(fmt::format_string<Args...> fmt, Args&&... args)
+void info(std::string_view fmt, Args&&... args)
 {
-    log(level::info, fmt::format(fmt, std::forward<Args>(args)...));
+    log(level::info, format(fmt, std::forward<Args>(args)...));
 }
 
 template<typename... Args>
-void warn(fmt::format_string<Args...> fmt, Args&&... args)
+void warn(std::string_view fmt, Args&&... args)
 {
-    log(level::warn, fmt::format(fmt, std::forward<Args>(args)...));
+    log(level::warn, format(fmt, std::forward<Args>(args)...));
 }
 
 template<typename... Args>
-void err(fmt::format_string<Args...> fmt, Args&&... args)
+void err(std::string_view fmt, Args&&... args)
 {
-    log(level::err, fmt::format(fmt, std::forward<Args>(args)...));
+    log(level::err, format(fmt, std::forward<Args>(args)...));
 }
 
 inline void trace(std::string_view msg)

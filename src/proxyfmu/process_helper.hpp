@@ -3,8 +3,6 @@
 #define ECOS_PROXYFMU_PROCESS_HELPER_HPP
 
 #include <ecos/logger/logger.hpp>
-
-#include <spdlog/spdlog.h>
 #include <subprocess/subprocess.h>
 
 #include <filesystem>

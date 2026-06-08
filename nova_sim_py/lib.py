@@ -9,6 +9,10 @@ def load_library():
 
     bin_folder = str((Path(__file__).parent / 'binaries').resolve())
     lib_name = f"libnova_simc{suffix()}"
+    
+    current_path = os.environ.get("PATH", "")
+    if bin_folder not in current_path:
+        os.environ["PATH"] = bin_folder + os.pathsep + current_path
 
     if os.name == "nt":
         with os.add_dll_directory(bin_folder):

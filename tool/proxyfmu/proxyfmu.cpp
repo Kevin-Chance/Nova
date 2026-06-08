@@ -9,9 +9,7 @@
 #include "simple_socket/util/byte_conversion.hpp"
 #include "simple_socket/util/port_query.hpp"
 #include <flatbuffers/flexbuffers.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/spdlog.h>
+#include <ecos/logger/logger.hpp>
 
 #include <cli11/CLI11.h>
 #include <iostream>
@@ -51,21 +49,21 @@ int run_application(const std::string& fmu, const std::string& instanceName, boo
     if (!local) {
         const auto port = simple_socket::getAvailablePort(port_range_min, port_range_max);
         if (!port) {
-            spdlog::error("Unable to locate free port number..");
+            nova_sim::log::err("Unable to locate free port number..");
             return UNHANDLED_ERROR;
         }
 
         try {
             simple_socket::TCPServer server(*port);
-            spdlog::info("Serving proxy '{}' on port {}", instanceName, *port);
+            nova_sim::log::info("Serving proxy '{}' on port {}", instanceName, *port);
             // communication with parent process
             std::cout << "[proxyfmu] bind=" << std::to_string(*port) << std::endl;
 
             auto con = server.accept();
-            spdlog::info("TCP Client connected");
+            nova_sim::log::info("TCP Client connected");
             client_handler(std::move(con), fmu, instanceName);
         } catch (const std::exception& ex) {
-            spdlog::error("[run_application] Exception occurred: {}", ex.what());
+            nova_sim::log::err("[run_application] Exception occurred: {}", ex.what());
             return UNHANDLED_ERROR;
         }
     } else {
@@ -77,16 +75,16 @@ int run_application(const std::string& fmu, const std::string& instanceName, boo
 
         try {
             simple_socket::UnixDomainServer server(fileHandle);
-            spdlog::info("Serving proxy '{}' using file '{}'", instanceName, fileHandle);
+            nova_sim::log::info("Serving proxy '{}' using file '{}'", instanceName, fileHandle);
 
             // communication with parent process
             std::cout << "[proxyfmu] bind=" << fileHandle << std::endl;
 
             auto con = server.accept();
-            spdlog::info("Unix Domain Client connected");
+            nova_sim::log::info("Unix Domain Client connected");
             client_handler(std::move(con), fmu, instanceName);
         } catch (const std::exception& ex) {
-            spdlog::error("[run_application] Exception occurred: {}", ex.what());
+            nova_sim::log::err("[run_application] Exception occurred: {}", ex.what());
             return UNHANDLED_ERROR;
         }
     }
@@ -97,7 +95,7 @@ int run_application(const std::string& fmu, const std::string& instanceName, boo
 int run_boot_application(const int port)
 {
 
-    spdlog::info("Boot application serving on port {}", port);
+    nova_sim::log::info("Boot application serving on port {}", port);
 
     boot_service_handler handler;
     simple_socket::TCPServer server(port);
@@ -128,7 +126,7 @@ int run_boot_application(const int port)
                     const auto blobRef = root[2].AsBlob();
                     const std::vector<uint8_t> data = std::vector(blobRef.data(), blobRef.data() + blobRef.size());
 
-                    spdlog::info("Booting: {}::{}, file size={}", fmuName, instanceName, data.size());
+                    nova_sim::log::info("Booting: {}::{}, file size={}", fmuName, instanceName, data.size());
 
                     const int16_t instance_port = handler.loadFromBinaryData(fmuName, instanceName, data);
                     flexbuffers::Builder fbb;
@@ -137,7 +135,7 @@ int run_boot_application(const int port)
                     conn->write(fbb.GetBuffer());
 
                     } catch (const std::exception& ex) {
-                        spdlog::error("Exception occurred: {}", ex.what());
+                        nova_sim::log::err("Exception occurred: {}", ex.what());
                     }
                 }
             } catch (const std::exception&) {}
@@ -191,13 +189,10 @@ int main(int argc, char** argv)
 
         if (*sub) {
 
-            const auto logger = spdlog::stdout_color_mt("proxyfmu_boot");
-            set_default_logger(logger);
-            logger->set_level(spdlog::level::debug);
+            nova_sim::log::set_logging_level(nova_sim::log::level::debug);
 
             const auto port = sub->get_option("--port")->as<int>();
             const auto status = run_boot_application(port);
-            spdlog::shutdown();
             return status;
 
         }
@@ -205,28 +200,20 @@ int main(int argc, char** argv)
         const auto local = local_opt->as<bool>();
         const auto instanceName = name_opt->as<std::string>();
 
-        const std::string logFile{"logs/" + instanceName + ".txt"};
-        fs::create_directories("logs");
-        std::ofstream ofs(logFile, std::ofstream::out | std::ofstream::trunc);
-        ofs.close();
-
-        auto file_logger = spdlog::basic_logger_mt("proxyfmu_file", logFile);
-        file_logger->set_level(spdlog::level::debug);
-        file_logger->flush_on(spdlog::level::info);
-        set_default_logger(file_logger);
-        spdlog::flush_every(std::chrono::seconds(1));
+        // NovaLogger doesn't support file logging yet, we'll skip creating the file logger
+        // and just use the console logger with debug level.
+        nova_sim::log::set_logging_level(nova_sim::log::level::debug);
 
         const auto fmu = fmu_opt->as<std::string>();
         const auto fmuPath = fs::path(fmu);
         if (!fs::exists(fmuPath)) {
-            spdlog::error("No such file: '{}'", fs::absolute(fmuPath).string());
+            nova_sim::log::err("No such file: '{}'", fs::absolute(fmuPath).string());
             return COMMANDLINE_ERROR;
         }
 
-        spdlog::info("Got commandline arguments: --fmu '{}', --instanceName '{}', --local {}", fmu, instanceName, local);
+        nova_sim::log::info("Got commandline arguments: --fmu '{}', --instanceName '{}', --local {}", fmu, instanceName, local);
 
         const auto status = run_application(fmu, instanceName, local);
-        spdlog::shutdown();
 
         return status;
 

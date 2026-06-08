@@ -11,7 +11,7 @@ namespace nova_sim::ssp
 {
 
 Connection parse_connection(
-    const pugi::xml_node& node,
+    const xml::XmlNode& node,
     const std::unordered_map<std::string, Component>& components)
 {
     const std::string startElement = node.attribute("startElement").as_string();
@@ -46,7 +46,7 @@ Connection parse_connection(
 }
 
 std::vector<Connection> parse_connections(
-    const pugi::xml_node& node,
+    const xml::XmlNode& node,
     const std::unordered_map<std::string, Component>& components)
 {
     std::vector<Connection> connections;
@@ -56,7 +56,7 @@ std::vector<Connection> parse_connections(
     return connections;
 }
 
-Connector parse_connector(const pugi::xml_node& node)
+Connector parse_connector(const xml::XmlNode& node)
 {
     const std::string connectorName = node.attribute("name").as_string();
     const std::string connectorKind = node.attribute("kind").as_string();
@@ -73,7 +73,7 @@ Connector parse_connector(const pugi::xml_node& node)
     return connector;
 }
 
-std::unordered_map<std::string, Connector> parse_connectors(const pugi::xml_node& node)
+std::unordered_map<std::string, Connector> parse_connectors(const xml::XmlNode& node)
 {
     std::unordered_map<std::string, Connector> connectors;
     for (const auto c : node) {
@@ -83,11 +83,11 @@ std::unordered_map<std::string, Connector> parse_connectors(const pugi::xml_node
     return connectors;
 }
 
-Parameter parse_parameter(const pugi::xml_node& node)
+Parameter parse_parameter(const xml::XmlNode& node)
 {
     const auto name = node.attribute("name").as_string();
     Parameter parameter{name};
-    pugi::xml_node typeNode;
+    xml::XmlNode typeNode;
     if (node.child("ssv:Real")) {
         typeNode = node.child("ssv:Real");
         const double value = typeNode.attribute("value").as_double();
@@ -114,20 +114,20 @@ Parameter parse_parameter(const pugi::xml_node& node)
 }
 
 std::unordered_map<std::string, ParameterSet>
-parse_parameter_bindings(const std::filesystem::path& dir, const pugi::xml_node& node)
+parse_parameter_bindings(const std::filesystem::path& dir, const xml::XmlNode& node)
 {
     std::unordered_map<std::string, ParameterSet> parameterSets;
     for (const auto parameterBindingNode : node) {
-        pugi::xml_node parameterSetNode;
-        std::unique_ptr<pugi::xml_document> doc;
+        xml::XmlNode parameterSetNode;
+        std::unique_ptr<xml::XmlDocument> doc;
         if (const auto parameterValues = parameterBindingNode.child("ssd:ParameterValues")) {
             parameterSetNode = parameterValues.child("ssv:ParameterSet");
         } else {
             const auto source = parameterBindingNode.attribute("source").as_string();
-            doc = std::make_unique<pugi::xml_document>();
-            if (pugi::xml_parse_result result = doc->load_file(std::filesystem::path(dir / source).c_str()); !result) {
+            doc = std::make_unique<xml::XmlDocument>();
+            if (!doc->load_file(std::filesystem::path(dir / source).string().c_str())) {
                 throw std::runtime_error(
-                    "Unable to parse '" + absolute(std::filesystem::path(dir / source)).string() + "': " + result.description());
+                    "Unable to parse '" + absolute(std::filesystem::path(dir / source)).string() + "'");
             }
             parameterSetNode = doc->child("ssv:ParameterSet");
         }
@@ -143,7 +143,7 @@ parse_parameter_bindings(const std::filesystem::path& dir, const pugi::xml_node&
     return parameterSets;
 }
 
-Component parse_component(const std::filesystem::path& dir, const pugi::xml_node& node)
+Component parse_component(const std::filesystem::path& dir, const xml::XmlNode& node)
 {
     const std::string componentName = node.attribute("name").as_string();
     const std::string componentSource = node.attribute("source").as_string();
@@ -152,7 +152,7 @@ Component parse_component(const std::filesystem::path& dir, const pugi::xml_node
     return {componentName, componentSource, connectors, parameterSets};
 }
 
-std::unordered_map<std::string, Component> parse_components(const std::filesystem::path& dir, const pugi::xml_node& node)
+std::unordered_map<std::string, Component> parse_components(const std::filesystem::path& dir, const xml::XmlNode& node)
 {
     std::unordered_map<std::string, Component> components;
     for (const auto childNode : node) {
@@ -164,7 +164,7 @@ std::unordered_map<std::string, Component> parse_components(const std::filesyste
     return components;
 }
 
-Elements parse_elements(const std::filesystem::path& dir, const pugi::xml_node& node)
+Elements parse_elements(const std::filesystem::path& dir, const xml::XmlNode& node)
 {
     Elements elements;
     elements.components = parse_components(dir, node);
@@ -180,7 +180,7 @@ Elements parse_elements(const std::filesystem::path& dir, const pugi::xml_node& 
     return elements;
 }
 
-std::vector<Annotation> parse_annotations(const pugi::xml_node& node)
+std::vector<Annotation> parse_annotations(const xml::XmlNode& node)
 {
     std::vector<Annotation> annotations;
     for (const auto& annotationNode : node) {
@@ -190,7 +190,7 @@ std::vector<Annotation> parse_annotations(const pugi::xml_node& node)
     return annotations;
 }
 
-DefaultExperiment parse_default_experiment(const pugi::xml_node& node)
+DefaultExperiment parse_default_experiment(const xml::XmlNode& node)
 {
     const auto start = node.attribute("startTime");
     const auto stop = node.attribute("stopTime");
@@ -207,7 +207,7 @@ DefaultExperiment parse_default_experiment(const pugi::xml_node& node)
     return ex;
 }
 
-System parse_system(const std::filesystem::path& dir, const pugi::xml_node& node)
+System parse_system(const std::filesystem::path& dir, const xml::XmlNode& node)
 {
     System sys;
     sys.name = node.attribute("name").as_string();
@@ -232,7 +232,7 @@ struct SystemStructureDescription::Impl
     std::optional<DefaultExperiment> defaultExperiment;
 
     std::filesystem::path dir_;
-    pugi::xml_document doc_;
+    xml::XmlDocument doc_;
     std::unique_ptr<temp_dir> tmp_ = nullptr;
 
     explicit Impl(const std::filesystem::path& path)
@@ -252,11 +252,9 @@ struct SystemStructureDescription::Impl
             }
         }
 
-        pugi::xml_parse_result result = doc_.load_file(std::filesystem::path(dir_ / "SystemStructure.ssd").c_str());
-        if (!result) {
+        if (!doc_.load_file(std::filesystem::path(dir_ / "SystemStructure.ssd").string().c_str())) {
             throw std::runtime_error(
-                "Unable to parse '" + absolute(std::filesystem::path(dir_ / "SystemStructure.ssd")).string() + "': " +
-                result.description());
+                "Unable to parse '" + absolute(std::filesystem::path(dir_ / "SystemStructure.ssd")).string() + "'");
         }
 
         const auto root = doc_.child("ssd:SystemStructureDescription");

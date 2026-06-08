@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <pugixml.hpp>
+#include "ecos/util/nova_xml.hpp"
 
 namespace nova_sim {
 
@@ -28,12 +28,10 @@ void csv_config::load(const std::filesystem::path& configPath) {
     if (const auto ext = configPath.extension().string(); ext != ".xml") {
         throw std::runtime_error("Wrong config extension. Was " + ext + ", expected " + ".xml");
     }
-    pugi::xml_document doc;
-    pugi::xml_parse_result result = doc.load_file(configPath.c_str());
-    if (!result) {
+    xml::XmlDocument doc;
+    if (!doc.load_file(configPath.string().c_str())) {
         throw std::runtime_error(
-            "Unable to parse '" + std::filesystem::absolute(configPath).string() + "': " +
-            result.description());
+            "Unable to parse '" + std::filesystem::absolute(configPath).string() + "'");
     }
 
     const auto root = doc.child("ecos:LogConfig");

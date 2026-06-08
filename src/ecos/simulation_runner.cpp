@@ -1,7 +1,6 @@
 
 #include "ecos/simulation_runner.hpp"
-
-#include "spdlog/stopwatch.h"
+#include "ecos/logger/logger.hpp"
 
 using namespace nova_sim;
 
@@ -61,7 +60,7 @@ void simulation_runner::run()
                 continue;
             }
 
-            spdlog::stopwatch sw;
+            log::Stopwatch sw;
             if (predicate_ && !predicate_()) {
                 stop_ = true;
             } else {

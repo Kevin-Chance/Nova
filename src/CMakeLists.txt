@@ -57,10 +57,9 @@ add_subdirectory(fmilibcpp)
 # 2. Build libecos and link to fmilibcpp
 add_library(libecos ${publicHeadersFull} ${sources} ${generatedFiles})
 target_link_libraries(libecos PUBLIC fmilibcpp)
+
 target_include_directories(libecos PUBLIC 
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/spdlog>"
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml>"
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 target_compile_features(libecos PUBLIC "cxx_std_20")

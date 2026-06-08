@@ -10,10 +10,10 @@ message("Current ${PROJECT_NAME} version: ${CMAKE_PROJECT_VERSION}\n")
 
 option(BUILD_SHARED_LIBS OFF)
 option(ECOS_BUILD_TESTS "Build tests" ON)
-option(ECOS_BUILD_EXAMPLES "Build examples" OFF)
-option(ECOS_BUILD_CLI "Build CLI" ON)
+option(ECOS_BUILD_EXAMPLES "Build examples" ON)
+option(ECOS_BUILD_CLI "Build CLI" OFF)
 option(ECOS_BUILD_CLIB "Build C library (required for nova_sim_py)" ON)
-option(ECOS_WITH_PROXYFMU "Build with proxyfmu" ON)
+option(ECOS_WITH_PROXYFMU "Build with proxyfmu" OFF)
 
 
 # ==============================================================================

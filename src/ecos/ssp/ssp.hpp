@@ -6,7 +6,7 @@
 #include <map>
 #include <memory>
 #include <optional>
-#include <pugixml.hpp>
+#include "ecos/util/nova_xml.hpp"
 #include <string>
 #include <unordered_map>
 #include <variant>
@@ -105,7 +105,7 @@ struct Connection
 struct Annotation
 {
     std::string type;
-    pugi::xml_node node;
+    xml::XmlNode node;
 };
 
 struct DefaultExperiment

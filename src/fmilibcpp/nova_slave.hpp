@@ -1,7 +1,7 @@
 #ifndef FMILIBCPP_NOVA_SLAVE_HPP
 #define FMILIBCPP_NOVA_SLAVE_HPP
 
-#include "model_description.hpp"
+#include "slave.hpp"
 #include "nova_fmi_library.hpp"
 #include <memory>
 #include <string>
@@ -11,11 +11,8 @@
 
 namespace nova_fmi {
 
-using value_ref = uint32_t;
-
-class NovaSlave {
+class NovaSlave : public slave {
 public:
-    std::string instanceName;
     model_description md;
 
     std::shared_ptr<void> component_;
@@ -42,7 +39,7 @@ public:
     } fmi;
 
     NovaSlave(std::string name, model_description desc, std::shared_ptr<NovaFmiLibrary> lib)
-        : instanceName(std::move(name)), md(std::move(desc)), lib_(std::move(lib)) {}
+        : slave(std::move(name)), md(std::move(desc)), lib_(std::move(lib)) {}
 
     virtual ~NovaSlave() = default;
 

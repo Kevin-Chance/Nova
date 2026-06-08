@@ -8,7 +8,7 @@
 #include "proxyfmu/opcodes.hpp"
 #include "simple_socket/TCPSocket.hpp"
 #include <flatbuffers/flexbuffers.h>
-#include <spdlog/spdlog.h>
+#include <ecos/logger/logger.hpp>
 
 inline void sendStatus(simple_socket::SimpleConnection& conn, bool status)
 {
@@ -83,7 +83,7 @@ inline void client_handler(std::unique_ptr<simple_socket::SimpleConnection> conn
             uint16_t arg{0};
             uint8_t func = root[arg++].AsUInt8();
             op = nova_sim::proxy::int_to_enum(func);
-            spdlog::trace("Got opcode: {}", opcode_to_string(op));
+            nova_sim::log::trace("Got opcode: {}", opcode_to_string(op));
             switch (op) {
                 case nova_sim::proxy::opcodes::instantiate: {
                     auto model = nova_fmi::loadFmu(fmu);
@@ -232,16 +232,16 @@ inline void client_handler(std::unique_ptr<simple_socket::SimpleConnection> conn
                     sendStatus(*conn, status);
                 } break;
                 default: {
-                    spdlog::error("Unknown command: {}", func);
+                    nova_sim::log::err("Unknown command: {}", func);
                     sendStatus(*conn, false);
                 } break;
             }
         }
     } catch (const std::exception& ex) {
-        spdlog::warn("Exception in client handler: {}. Last opcode={}", ex.what(), opcode_to_string(op));
+        nova_sim::log::warn("Exception in client handler: {}. Last opcode={}", ex.what(), opcode_to_string(op));
     }
 
-    spdlog::info("Client handler exit, last opcode={}", opcode_to_string(op));
+    nova_sim::log::info("Client handler exit, last opcode={}", opcode_to_string(op));
 }
 
 

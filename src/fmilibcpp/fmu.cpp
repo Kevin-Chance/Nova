@@ -7,7 +7,7 @@
 #include "ecos/logger/logger.hpp"
 #include "nova_fmi_library.hpp"
 
-#include <pugixml.hpp>
+#include "ecos/util/nova_xml.hpp"
 #include <iostream>
 
 namespace nova_fmi {
@@ -28,7 +28,7 @@ std::unique_ptr<fmu> loadFmu(const std::filesystem::path& fmuPath, bool fmiLoggi
         return nullptr;
     }
 
-    pugi::xml_document doc;
+    nova_sim::xml::XmlDocument doc;
     if (!doc.load_file((temp->path() / "modelDescription.xml").string().c_str())) {
         std::cerr << "[loadFmu] Failed to load XML" << std::endl;
         return nullptr;
