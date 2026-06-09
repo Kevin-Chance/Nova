@@ -277,22 +277,37 @@ def make_xy_series(csv, xyseries):
     plt.title(xyseries.attrib["title"])
     plt.xlabel(xyseries.attrib["xLabel"])
     plt.ylabel(xyseries.attrib["yLabel"])
+
+    clean_col_map = {}
+    for col in csv.columns:
+        clean_col = re.sub(r'\s*\[.*?]\s*$', '', col)
+        clean_col_map[clean_col] = col
+
     for series in xyseries:
         name = series.attrib["name"]
         marker = series.attrib["marker"] if 'marker' in series.attrib else None
+        
         x = series[0]
         v1 = "{}::{}".format(x.attrib["component"], x.attrib["variable"])
+        if v1 not in clean_col_map and v1 == "time":
+            data1 = csv['time']
+        else:
+            data1 = csv[clean_col_map[v1]] if v1 in clean_col_map else None
+
         y = series[1]
         v2 = "{}::{}".format(y.attrib["component"], y.attrib["variable"])
-        m1 = csv.columns.str.contains(re.escape(v1))
-        data1 = csv.loc[:, m1]
-        m2 = csv.columns.str.contains(re.escape(v2))
-        data2 = csv.loc[:, m2]
-
-        if marker is None:
-            plt.plot(data1, data2, label=name)
+        if v2 not in clean_col_map and v2 == "time":
+            data2 = csv['time']
         else:
-            plt.plot(data1, data2, marker, label=name)
+            data2 = csv[clean_col_map[v2]] if v2 in clean_col_map else None
+
+        if data1 is not None and data2 is not None:
+            if marker is None:
+                plt.plot(data1, data2, label=name)
+            else:
+                plt.plot(data1, data2, marker, label=name)
+        else:
+            print(f"Warning: Could not plot series '{name}' due to missing columns ({v1} or {v2}).")
 
     plt.legend(loc='upper right')
 
