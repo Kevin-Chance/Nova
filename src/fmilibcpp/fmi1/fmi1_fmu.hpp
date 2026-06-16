@@ -1,5 +1,5 @@
-#ifndef ECOS_FMI_FMI1_FMU_HPP
-#define ECOS_FMI_FMI1_FMU_HPP
+#ifndef NOVA_FMI_FMI1_FMU_HPP
+#define NOVA_FMI_FMI1_FMU_HPP
 
 #include "fmilibcpp/fmu.hpp"
 #include "fmilibcpp/nova_fmi_library.hpp"
@@ -25,4 +25,4 @@ private:
 
 } // namespace nova_fmi
 
-#endif // ECOS_FMI_FMI1_FMU_HPP
+#endif // NOVA_FMI_FMI1_FMU_HPP

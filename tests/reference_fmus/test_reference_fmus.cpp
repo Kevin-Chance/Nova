@@ -1,9 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "ecos/nova_fmu_locator.hpp"
-#include "ecos/simulation.hpp"
-#include <ecos/algorithm/fixed_step_algorithm.hpp>
-#include <ecos/structure/simulation_structure.hpp>
+#include "nova/nova_fmu_locator.hpp"
+#include "nova/simulation.hpp"
+#include <nova/algorithm/fixed_step_algorithm.hpp>
+#include <nova/structure/simulation_structure.hpp>
 
 using namespace nova_sim;
 

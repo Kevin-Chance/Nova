@@ -56,5 +56,5 @@ endif ()
 
 add_executable(test_reference_fmus test_reference_fmus.cpp)
 add_test(NAME test_reference_fmus COMMAND test_reference_fmus)
-target_link_libraries(test_reference_fmus PRIVATE libecos Catch2::Catch2WithMain)
+target_link_libraries(test_reference_fmus PRIVATE libnova Catch2::Catch2WithMain)
 target_compile_definitions(test_reference_fmus PRIVATE "REF_FMU_FOLDER=\"${UNZIP_DIR}\"")

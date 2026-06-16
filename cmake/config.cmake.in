@@ -3,5 +3,5 @@ include ("@PACKAGE_targetsFile@")
 
 include(CMakeFindDependencyMacro)
 
-include("${CMAKE_CURRENT_LIST_DIR}/ecos-targets.cmake")
-check_required_components(ecos)
+include("${CMAKE_CURRENT_LIST_DIR}/nova-targets.cmake")
+check_required_components(nova)

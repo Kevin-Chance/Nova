@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:ecos="http://github.com/Ecos-platform/libecos/resources/schema/ChartConfig"
+           xmlns:nova="http://github.com/Nova-platform/libnova/resources/schema/ChartConfig"
            elementFormDefault="qualified"
-           targetNamespace="http://github.com/Ecos-platform/libecos/resources/schema/ChartConfig">
+           targetNamespace="http://github.com/Nova-platform/libnova/resources/schema/ChartConfig">
 
-    <xs:element name="ChartConfig" type="ecos:TChartConfig"/>
+    <xs:element name="ChartConfig" type="nova:TChartConfig"/>
 
     <xs:complexType name="TChartConfig">
         <xs:sequence>
-            <xs:element name="chart" type="ecos:TChart" maxOccurs="unbounded"/>
+            <xs:element name="chart" type="nova:TChart" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="TChart">
         <xs:choice>
-            <xs:element name="xyseries" type="ecos:TXYSeriesChart"/>
-            <xs:element name="timeseries" type="ecos:TTimeSeriesChart"/>
+            <xs:element name="xyseries" type="nova:TXYSeriesChart"/>
+            <xs:element name="timeseries" type="nova:TTimeSeriesChart"/>
         </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="TXYSeriesChart">
         <xs:sequence>
-            <xs:element name="series" type="ecos:TXYSeries" maxOccurs="unbounded"/>
+            <xs:element name="series" type="nova:TXYSeries" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="title" type="xs:string" use="required"/>
         <xs:attribute name="xLabel" type="xs:string" use="required"/>
@@ -30,8 +30,8 @@
 
     <xs:complexType name="TXYSeries">
         <xs:sequence>
-            <xs:element name="x" type="ecos:TVariableIdentifier"/>
-            <xs:element name="y" type="ecos:TVariableIdentifier"/>
+            <xs:element name="x" type="nova:TVariableIdentifier"/>
+            <xs:element name="y" type="nova:TVariableIdentifier"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="marker" type="xs:string" />
@@ -39,7 +39,7 @@
 
     <xs:complexType name="TTimeSeriesChart">
         <xs:sequence>
-            <xs:element name="series" type="ecos:TTimeSeries"/>
+            <xs:element name="series" type="nova:TTimeSeries"/>
         </xs:sequence>
         <xs:attribute name="title" type="xs:string" use="required"/>
         <xs:attribute name="label" type="xs:string" use="required"/>
@@ -47,7 +47,7 @@
 
     <xs:complexType name="TTimeSeries">
         <xs:sequence>
-            <xs:element name="component" type="ecos:TComponent" maxOccurs="unbounded"/>
+            <xs:element name="component" type="nova:TComponent" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -58,14 +58,14 @@
 
     <xs:complexType name="TComponent">
         <xs:sequence>
-            <xs:element name="variable" type="ecos:TVariable" maxOccurs="unbounded"/>
+            <xs:element name="variable" type="nova:TVariable" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="TVariable">
         <xs:sequence>
-            <xs:element name="linearTransformation" type="ecos:TLinearTransformation" minOccurs="0"/>
+            <xs:element name="linearTransformation" type="nova:TLinearTransformation" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>

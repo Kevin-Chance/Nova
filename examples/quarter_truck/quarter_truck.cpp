@@ -1,11 +1,11 @@
 
-#include "ecos/algorithm/fixed_step_algorithm.hpp"
-#include "ecos/listeners/csv_writer.hpp"
-#include "ecos/logger/logger.hpp"
-#include "ecos/structure/simulation_structure.hpp"
-#include "ecos/util/plotter.hpp"
+#include "nova/algorithm/fixed_step_algorithm.hpp"
+#include "nova/listeners/csv_writer.hpp"
+#include "nova/logger/logger.hpp"
+#include "nova/structure/simulation_structure.hpp"
+#include "nova/util/plotter.hpp"
 
-using namespace ecos;
+using namespace nova;
 
 int main()
 {

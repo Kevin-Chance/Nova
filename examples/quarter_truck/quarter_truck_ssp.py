@@ -1,18 +1,18 @@
-from ecospy import *
-from ecospy.plotter import *
+from novapy import *
+from novapy.plotter import *
 
 from pathlib import Path
 
 def main():
-    print(f"Ecoslib version: {EcosLib().version()}")
+    print(f"Novalib version: {NovaLib().version()}")
 
-    EcosLib().set_log_level("debug")
+    NovaLib().set_log_level("debug")
 
     ssp_dir = (Path(__file__).parent.parent.parent / 'data' / 'ssp' / '1.0' / 'quarter_truck').resolve()
     ssp_file = f"{ssp_dir}/quarter-truck.ssp"
     result_file = "results/python/quarter_truck_ssp.csv"
 
-    with(EcosSimulation(ssp_path=ssp_file, step_size=1.0 / 100)) as sim:
+    with(NovaSimulation(ssp_path=ssp_file, step_size=1.0 / 100)) as sim:
 
         sim.add_csv_writer(result_file, f"{ssp_dir}/CsvConfig.xml")
 

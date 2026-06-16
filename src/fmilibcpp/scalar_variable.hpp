@@ -1,5 +1,5 @@
-#ifndef ECOS_FMI_SCALAR_VARIABLE_HPP
-#define ECOS_FMI_SCALAR_VARIABLE_HPP
+#ifndef NOVA_FMI_SCALAR_VARIABLE_HPP
+#define NOVA_FMI_SCALAR_VARIABLE_HPP
 
 #include <string>
 #include <variant>
@@ -53,4 +53,4 @@ using model_variables = std::vector<scalar_variable>;
 
 } // namespace nova_fmi
 
-#endif // ECOS_FMI_SCALAR_VARIABLE_HPP
+#endif // NOVA_FMI_SCALAR_VARIABLE_HPP

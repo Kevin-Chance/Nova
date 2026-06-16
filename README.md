@@ -5,6 +5,6 @@
 //Windows
 Run 'build.bat'.
 //Linux
-cmake . -B build -DECOS_BUILD_EXAMPLES=ON -DECOS_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+cmake . -B build -DNOVA_BUILD_EXAMPLES=ON -DNOVA_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```

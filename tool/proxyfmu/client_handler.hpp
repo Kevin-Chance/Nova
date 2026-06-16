@@ -8,7 +8,7 @@
 #include "proxyfmu/opcodes.hpp"
 #include "simple_socket/TCPSocket.hpp"
 #include <flatbuffers/flexbuffers.h>
-#include <ecos/logger/logger.hpp>
+#include <nova/logger/logger.hpp>
 
 inline void sendStatus(simple_socket::SimpleConnection& conn, bool status)
 {

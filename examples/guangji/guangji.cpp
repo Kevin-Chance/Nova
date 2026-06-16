@@ -1,13 +1,13 @@
-﻿#include "ecos/algorithm/fixed_step_algorithm.hpp"
-#include "ecos/logger/logger.hpp"
-#include "ecos/model_resolver.hpp"
-#include "ecos/simulation.hpp"
-#include "ecos/structure/simulation_structure.hpp"
-#include <ecos/listeners/csv_writer.hpp>
+﻿#include "nova/algorithm/fixed_step_algorithm.hpp"
+#include "nova/logger/logger.hpp"
+#include "nova/model_resolver.hpp"
+#include "nova/simulation.hpp"
+#include "nova/structure/simulation_structure.hpp"
+#include <nova/listeners/csv_writer.hpp>
 
 #include <iostream>
 
-using namespace ecos;
+using namespace nova;
 //  用于存放配置的结构体
 struct SimConfig
 {

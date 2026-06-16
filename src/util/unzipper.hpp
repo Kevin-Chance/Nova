@@ -1,6 +1,6 @@
 
-#ifndef ECOS_UNZIPPER_HPP
-#define ECOS_UNZIPPER_HPP
+#ifndef NOVA_UNZIPPER_HPP
+#define NOVA_UNZIPPER_HPP
 
 #ifdef _WIN32
 #    include <process.h>
@@ -108,4 +108,4 @@ inline bool unzip(const std::filesystem::path& zip_file, const std::filesystem::
 
 } // namespace nova_sim
 
-#endif // ECOS_UNZIPPER_HPP
+#endif // NOVA_UNZIPPER_HPP

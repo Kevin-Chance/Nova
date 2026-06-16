@@ -2,12 +2,12 @@
 #ifndef NOVA_SMD_COMMON_HPP
 #define NOVA_SMD_COMMON_HPP
 
-#include "ecos/algorithm/fixed_step_algorithm.hpp"
-#include "ecos/logger/logger.hpp"
-#include "ecos/simulation.hpp"
-#include "ecos/structure/simulation_structure.hpp"
-#include "ecos/listeners/csv_writer.hpp"
-#include "ecos/util/plotter.hpp"
+#include "nova/algorithm/fixed_step_algorithm.hpp"
+#include "nova/logger/logger.hpp"
+#include "nova/simulation.hpp"
+#include "nova/structure/simulation_structure.hpp"
+#include "nova/listeners/csv_writer.hpp"
+#include "nova/util/plotter.hpp"
 #include <filesystem>
 #include <map>
 

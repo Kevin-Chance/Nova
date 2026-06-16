@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecos:CsvConfig decimationFactor="25" xmlns:ecos="http://github.com/Ecos-platform/libecos/resources/schema/CsvConfig">
+<nova:CsvConfig decimationFactor="25" xmlns:nova="http://github.com/Nova-platform/libnova/resources/schema/CsvConfig">
 
-    <ecos:components>
-        <ecos:component name="Reference Generator">
-            <ecos:variable name="x_ref"/>
-            <ecos:variable name="y_ref"/>
-            <ecos:variable name="x_wp"/>
-            <ecos:variable name="y_wp"/>
-        </ecos:component>
-        <ecos:component name="Ship">
-            <ecos:variable name="q[1]"/>
-            <ecos:variable name="q[2]"/>
-        </ecos:component>
-    </ecos:components>
+    <nova:components>
+        <nova:component name="Reference Generator">
+            <nova:variable name="x_ref"/>
+            <nova:variable name="y_ref"/>
+            <nova:variable name="x_wp"/>
+            <nova:variable name="y_wp"/>
+        </nova:component>
+        <nova:component name="Ship">
+            <nova:variable name="q[1]"/>
+            <nova:variable name="q[2]"/>
+        </nova:component>
+    </nova:components>
 
-</ecos:CsvConfig>
+</nova:CsvConfig>

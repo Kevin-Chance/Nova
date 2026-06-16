@@ -1,8 +1,8 @@
 
-#ifndef ECOS_PROXYFMU_PROCESS_HELPER_HPP
-#define ECOS_PROXYFMU_PROCESS_HELPER_HPP
+#ifndef NOVA_PROXYFMU_PROCESS_HELPER_HPP
+#define NOVA_PROXYFMU_PROCESS_HELPER_HPP
 
-#include <ecos/logger/logger.hpp>
+#include <nova/logger/logger.hpp>
 #include <subprocess/subprocess.h>
 
 #include <filesystem>
@@ -145,4 +145,4 @@ inline void start_process(
 
 } // namespace nova_sim::proxy
 
-#endif // ECOS_PROXYFMU_PROCESS_HELPER_HPP
+#endif // NOVA_PROXYFMU_PROCESS_HELPER_HPP

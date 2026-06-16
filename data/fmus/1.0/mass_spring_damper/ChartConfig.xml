@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecos:ChartConfig xmlns:ecos="http://github.com/Ecos-platform/libecos/resources/schema/ChartConfig">
+<nova:ChartConfig xmlns:nova="http://github.com/Nova-platform/libnova/resources/schema/ChartConfig">
 
-    <ecos:chart>
-        <ecos:timeseries title="Mass-spring-damper" label="Height[m]">
-            <ecos:series>
-                <ecos:component name="mass">
-                    <ecos:variable name="out_l_u"/>
-                </ecos:component>
-            </ecos:series>
-        </ecos:timeseries>
-    </ecos:chart>
+    <nova:chart>
+        <nova:timeseries title="Mass-spring-damper" label="Height[m]">
+            <nova:series>
+                <nova:component name="mass">
+                    <nova:variable name="out_l_u"/>
+                </nova:component>
+            </nova:series>
+        </nova:timeseries>
+    </nova:chart>
 
-</ecos:ChartConfig>
+</nova:ChartConfig>

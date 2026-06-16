@@ -1,7 +1,7 @@
 #include "fmilibcpp/fmu.hpp"
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
-#include <ecos/model_instance.hpp>
+#include <nova/model_instance.hpp>
 
 using namespace nova_fmi;
 

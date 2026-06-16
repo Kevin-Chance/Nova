@@ -4,17 +4,17 @@ from nova_sim_py.plotter import Plotter, TimeSeriesConfig
 from pathlib import Path
 
 def main():
-    print(f"Ecoslib version: {EcosLib.version()}")
+    print(f"Novalib version: {NovaLib.version()}")
 
-    EcosLib.set_log_level("debug")
+    NovaLib.set_log_level("debug")
 
     fmu_path =  str((Path(__file__).parent.parent.parent / 'data' / 'fmus' / '3.0' / 'ref' / 'BouncingBall.fmu').resolve())
     result_file = f"results/python/bouncing_ball.csv"
 
-    with EcosSimulationStructure() as ss:
+    with NovaSimulationStructure() as ss:
         ss.add_model("ball", fmu_path)
 
-        with(EcosSimulation(structure=ss, step_size=1/100)) as sim:
+        with(NovaSimulation(structure=ss, step_size=1/100)) as sim:
 
             sim.add_csv_writer(result_file)
             sim.init()

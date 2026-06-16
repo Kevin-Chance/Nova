@@ -1,4 +1,4 @@
-FMBS_PATH = "D:/Project/ecos/ecos-master/data/fmus/1.0/Mass.fmu"
-MWorks_PATH = "D:/Project/ecos/ecos-master/data/fmus/1.0/Spring.fmu"
+FMBS_PATH = "D:/Project/nova/nova-master/data/fmus/1.0/Mass.fmu"
+MWorks_PATH = "D:/Project/nova/nova-master/data/fmus/1.0/Spring.fmu"
 TIME = 1.0
 DT = 0.1

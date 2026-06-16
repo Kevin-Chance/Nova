@@ -1,5 +1,5 @@
-from ecospy import *
-from ecospy.plotter import *
+from novapy import *
+from novapy.plotter import *
 
 import sys, signal
 from pathlib import Path
@@ -10,7 +10,7 @@ def signal_handler(sig, frame):
 
 def main():
     signal.signal(signal.SIGINT, signal_handler)
-    EcosLib.set_log_level("debug")
+    NovaLib.set_log_level("debug")
 
     ssp_dir = str((Path(__file__).parent.parent.parent / 'data' / 'ssp' / '1.0' / 'dp_ship').resolve())
     log_config = f"{ssp_dir}/CsvConfig.xml"
@@ -18,11 +18,11 @@ def main():
 
     result_file = "results/dp_ship.csv"
 
-    with(EcosSimulation(ssp_path=ssp_dir, step_size=0.1)) as sim:
+    with(NovaSimulation(ssp_path=ssp_dir, step_size=0.1)) as sim:
 
         sim.add_csv_writer(result_file, log_config)
         if not sim.load_scenario(scenario):
-            print(EcosLib.get_last_error())
+            print(NovaLib.get_last_error())
 
         sim.init()
         try:

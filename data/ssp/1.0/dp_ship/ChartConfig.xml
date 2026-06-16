@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecos:ChartConfig xmlns:ecos="http://github.com/Ecos-platform/libecos/resources/schema/ChartConfig">
+<nova:ChartConfig xmlns:nova="http://github.com/Nova-platform/libnova/resources/schema/ChartConfig">
 
-    <ecos:chart>
-        <ecos:xyseries title="dp-ship" xLabel="Position [north]" yLabel="Position [east]">
-            <ecos:series name="actual">
-                <ecos:x component="Ship" variable="q[1]"/>
-                <ecos:y component="Ship" variable="q[2]"/>
-            </ecos:series>
-            <ecos:series name="ref" marker="x">
-                <ecos:x component="Reference Generator" variable="x_wp"/>
-                <ecos:y component="Reference Generator" variable="y_wp"/>
-            </ecos:series>
+    <nova:chart>
+        <nova:xyseries title="dp-ship" xLabel="Position [north]" yLabel="Position [east]">
+            <nova:series name="actual">
+                <nova:x component="Ship" variable="q[1]"/>
+                <nova:y component="Ship" variable="q[2]"/>
+            </nova:series>
+            <nova:series name="ref" marker="x">
+                <nova:x component="Reference Generator" variable="x_wp"/>
+                <nova:y component="Reference Generator" variable="y_wp"/>
+            </nova:series>
 
-        </ecos:xyseries>
-    </ecos:chart>
+        </nova:xyseries>
+    </nova:chart>
 
-</ecos:ChartConfig>
+</nova:ChartConfig>

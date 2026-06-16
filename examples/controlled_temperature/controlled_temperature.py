@@ -7,17 +7,17 @@ def kelvin_to_deg(value: float) -> float:
     return value - 273.15
 
 def main():
-    print(f"Ecoslib version: {EcosLib.version()}")
+    print(f"Novalib version: {NovaLib.version()}")
 
-    EcosLib.set_log_level("debug")
+    NovaLib.set_log_level("debug")
 
     fmu_path = str((Path(__file__).parent.parent.parent / 'data' / 'fmus' / '2.0' / '20sim' / 'ControlledTemperature.fmu').resolve())
     result_file = "results/python/temperature.csv"
 
-    with EcosSimulationStructure() as ss:
+    with NovaSimulationStructure() as ss:
         ss.add_model("model", fmu_path)
 
-        with (EcosSimulation(structure=ss, step_size=1/100)) as sim:
+        with (NovaSimulation(structure=ss, step_size=1/100)) as sim:
 
             sim.add_csv_writer(result_file)
             sim.init()

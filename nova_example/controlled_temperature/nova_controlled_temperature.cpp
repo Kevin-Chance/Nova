@@ -1,5 +1,5 @@
 #include "ct_common.hpp"
-#include <ecos/util/plotter.hpp>
+#include <nova/util/plotter.hpp>
 
 int main()
 {

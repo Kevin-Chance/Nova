@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecos:ChartConfig xmlns:ecos="http://github.com/Ecos-platform/libecos/resources/schema/ChartConfig">
+<nova:ChartConfig xmlns:nova="http://github.com/Nova-platform/libnova/resources/schema/ChartConfig">
 
-    <ecos:chart>
-        <ecos:timeseries title="ControlledTemperature" label="Temperature">
-            <ecos:series>
-                <ecos:component name="slave">
-                    <ecos:variable name="Temperature_Room"/>
-                    <ecos:variable name="Temperature_Reference"/>
-                </ecos:component>
-            </ecos:series>
-        </ecos:timeseries>
-    </ecos:chart>
+    <nova:chart>
+        <nova:timeseries title="ControlledTemperature" label="Temperature">
+            <nova:series>
+                <nova:component name="slave">
+                    <nova:variable name="Temperature_Room"/>
+                    <nova:variable name="Temperature_Reference"/>
+                </nova:component>
+            </nova:series>
+        </nova:timeseries>
+    </nova:chart>
 
-</ecos:ChartConfig>
+</nova:ChartConfig>

@@ -1,5 +1,5 @@
 
-#include "ecos/nova_ecos.h"
+#include "nova/nova.h"
 
 #include <filesystem>
 #include <string>

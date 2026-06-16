@@ -1,8 +1,8 @@
 
 function(add_test_executable name)
     add_executable(${name} ${name}.cpp)
-    target_link_libraries(${name} PRIVATE libecos Catch2::Catch2WithMain)
-    if (ECOS_WITH_PROXYFMU)
+    target_link_libraries(${name} PRIVATE libnova Catch2::Catch2WithMain)
+    if (NOVA_WITH_PROXYFMU)
         target_link_libraries(${name} PRIVATE simple_socket) # why is this needed?
     endif ()
     target_include_directories(${name} PRIVATE "${PROJECT_SOURCE_DIR}/src")
@@ -11,10 +11,10 @@ function(add_test_executable name)
 endfunction()
 
 
-add_subdirectory(ecos)
+add_subdirectory(nova)
 add_subdirectory(fmilibcpp)
 add_subdirectory(reference_fmus)
 
-if (ECOS_WITH_PROXYFMU)
+if (NOVA_WITH_PROXYFMU)
     add_subdirectory(proxyfmu)
 endif ()

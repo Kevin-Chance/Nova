@@ -1,18 +1,18 @@
 
-add_executable(ecos main.cpp)
-target_link_libraries(ecos
+add_executable(nova main.cpp)
+target_link_libraries(nova
         PRIVATE
-        libecos
+        libnova
 )
-target_include_directories(ecos
+target_include_directories(nova
         PRIVATE
         "${THIRD_PARTY_INCLUDE_DIR}"
 )
 
-add_custom_command(TARGET ecos POST_BUILD
+add_custom_command(TARGET nova POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory ${PY_BINARY_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:ecos>
+        $<TARGET_FILE:nova>
         ${PY_BINARY_DIR}
-        COMMENT "Copying ecos to ${PY_BINARY_DIR}"
+        COMMENT "Copying nova to ${PY_BINARY_DIR}"
 )

@@ -1,9 +1,9 @@
 
 set(sources
         "proxyfmu.cpp"
-        "${PROJECT_SOURCE_DIR}/src/ecos/logger/logger.cpp"
+        "${PROJECT_SOURCE_DIR}/src/nova/logger/logger.cpp"
         "${PROJECT_SOURCE_DIR}/src/external/flatbuffers/flatbuffers/util.cpp"
-        "${GENERATED_SRC_DIR}/ecos/lib_info.cpp"
+        "${GENERATED_SRC_DIR}/nova/lib_info.cpp"
 )
 
 add_executable(proxyfmu ${sources})

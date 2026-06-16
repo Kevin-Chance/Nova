@@ -1,12 +1,12 @@
 #ifndef NOVA_SIM_CT_COMMON_HPP
 #define NOVA_SIM_CT_COMMON_HPP
 
-#include "ecos/simulation.hpp"
-#include "ecos/structure/simulation_structure.hpp"
-#include "ecos/algorithm/fixed_step_algorithm.hpp"
-#include "ecos/listeners/csv_writer.hpp"
-#include "ecos/logger/logger.hpp"
-#include "ecos/util/plotter.hpp"
+#include "nova/simulation.hpp"
+#include "nova/structure/simulation_structure.hpp"
+#include "nova/algorithm/fixed_step_algorithm.hpp"
+#include "nova/listeners/csv_writer.hpp"
+#include "nova/logger/logger.hpp"
+#include "nova/util/plotter.hpp"
 #include <filesystem>
 
 using namespace nova_sim;

@@ -1,10 +1,10 @@
 
-#ifndef ECOS_TEMP_DIR_HPP
-#define ECOS_TEMP_DIR_HPP
+#ifndef NOVA_TEMP_DIR_HPP
+#define NOVA_TEMP_DIR_HPP
 
 #include "util/uuid.hpp"
 
-#include "ecos/logger/logger.hpp"
+#include "nova/logger/logger.hpp"
 
 #include <filesystem>
 
@@ -16,7 +16,7 @@ class temp_dir
 
 public:
     explicit temp_dir(const std::string& name)
-        : path_(safe_temp_directory_path() /= "ecos_" + name + "_" + generate_uuid())
+        : path_(safe_temp_directory_path() /= "nova_" + name + "_" + generate_uuid())
     {
         create_directories(path_);
     }
@@ -59,4 +59,4 @@ private:
 } // namespace nova_sim
 
 
-#endif // ECOS_TEMP_DIR_HPP
+#endif // NOVA_TEMP_DIR_HPP

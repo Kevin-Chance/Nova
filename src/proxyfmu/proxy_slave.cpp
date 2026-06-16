@@ -3,7 +3,7 @@
 
 #include "process_helper.hpp"
 
-#include <ecos/logger/logger.hpp>
+#include <nova/logger/logger.hpp>
 
 #include "proxyfmu/opcodes.hpp"
 #include "simple_socket/TCPSocket.hpp"

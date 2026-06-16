@@ -2,14 +2,14 @@
 #include "client_handler.hpp"
 #include "util/uuid.hpp"
 
-#include "ecos/lib_info.hpp"
+#include "nova/lib_info.hpp"
 
 #include "simple_socket/TCPSocket.hpp"
 #include "simple_socket/UnixDomainSocket.hpp"
 #include "simple_socket/util/byte_conversion.hpp"
 #include "simple_socket/util/port_query.hpp"
 #include <flatbuffers/flexbuffers.h>
-#include <ecos/logger/logger.hpp>
+#include <nova/logger/logger.hpp>
 
 #include <cli11/CLI11.h>
 #include <iostream>

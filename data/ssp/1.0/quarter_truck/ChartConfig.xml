@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecos:ChartConfig xmlns:ecos="http://github.com/Ecos-platform/libecos/resources/schema/ChartConfig">
+<nova:ChartConfig xmlns:nova="http://github.com/Nova-platform/libnova/resources/schema/ChartConfig">
 
-    <ecos:chart>
-        <ecos:timeseries title="Quarter-truck" label="Height[m]">
-            <ecos:series>
-                <ecos:component name="chassis">
-                    <ecos:variable name="zChassis"/>
-                </ecos:component>
-                <ecos:component name="wheel">
-                    <ecos:variable name="zWheel"/>
-                </ecos:component>
-                <ecos:component name="ground">
-                    <ecos:variable name="zGround"/>
-                </ecos:component>
-            </ecos:series>
-        </ecos:timeseries>
-    </ecos:chart>
+    <nova:chart>
+        <nova:timeseries title="Quarter-truck" label="Height[m]">
+            <nova:series>
+                <nova:component name="chassis">
+                    <nova:variable name="zChassis"/>
+                </nova:component>
+                <nova:component name="wheel">
+                    <nova:variable name="zWheel"/>
+                </nova:component>
+                <nova:component name="ground">
+                    <nova:variable name="zGround"/>
+                </nova:component>
+            </nova:series>
+        </nova:timeseries>
+    </nova:chart>
 
-</ecos:ChartConfig>
+</nova:ChartConfig>

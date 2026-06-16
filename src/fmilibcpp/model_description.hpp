@@ -1,5 +1,5 @@
-#ifndef ECOS_FMI_MODEL_DESCRIPTION_HPP
-#define ECOS_FMI_MODEL_DESCRIPTION_HPP
+#ifndef NOVA_FMI_MODEL_DESCRIPTION_HPP
+#define NOVA_FMI_MODEL_DESCRIPTION_HPP
 
 #include "scalar_variable.hpp"
 #include <string>
@@ -45,4 +45,4 @@ struct model_description
 
 } // namespace nova_fmi
 
-#endif // ECOS_FMI_MODEL_DESCRIPTION_HPP
+#endif // NOVA_FMI_MODEL_DESCRIPTION_HPP

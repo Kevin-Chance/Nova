@@ -15,7 +15,7 @@ RUN apt-get update \
     libtbb-dev \
   && apt-get clean
 
-WORKDIR /home/ecos
+WORKDIR /home/nova
 COPY . .
-RUN cmake . -B build -DECOS_BUILD_EXAMPLES=ON -DECOS_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE="Release"
+RUN cmake . -B build -DNOVA_BUILD_EXAMPLES=ON -DNOVA_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE="Release"
 RUN cmake --build build

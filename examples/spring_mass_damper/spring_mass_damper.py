@@ -1,16 +1,16 @@
-from ecospy import *
-from ecospy.plotter import *
+from novapy import *
+from novapy.plotter import *
 
 from pathlib import Path
 
 def main():
 
-    EcosLib.set_log_level("debug")
+    NovaLib.set_log_level("debug")
 
     fmu_folder = (Path(__file__).parent.parent.parent / 'data' / 'fmus' / '1.0' / 'mass_spring_damper').resolve()
     result_file = f"results/spring_mass_damper.csv"
 
-    with EcosSimulationStructure() as ss:
+    with NovaSimulationStructure() as ss:
         if True:
             ss.add_model("damper", f"{fmu_folder}/Damper.fmu")
             ss.add_model("mass", f"{fmu_folder}/Mass.fmu")
@@ -38,14 +38,14 @@ def main():
         }
 
         if not ss.add_parameter_set("initialValues", params):
-            print(EcosLib.get_last_error())
+            print(NovaLib.get_last_error())
 
-        with(EcosSimulation(structure=ss, step_size=1.0/100) as sim):
+        with(NovaSimulation(structure=ss, step_size=1.0/100) as sim):
 
             sim.add_csv_writer(result_file)
 
             if not sim.init(parameter_set="initialValues"):
-                print(EcosLib.get_last_error())
+                print(NovaLib.get_last_error())
 
             sim.step_until(80)
             sim.terminate()

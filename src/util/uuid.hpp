@@ -1,6 +1,6 @@
 
-#ifndef ECOS_UUID_HPP
-#define ECOS_UUID_HPP
+#ifndef NOVA_UUID_HPP
+#define NOVA_UUID_HPP
 
 #include <ios>
 #include <random>
@@ -45,4 +45,4 @@ inline std::string generate_uuid()
 
 } // namespace nova_sim
 
-#endif // ECOS_UUID_HPP
+#endif // NOVA_UUID_HPP

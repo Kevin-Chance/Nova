@@ -1,6 +1,6 @@
 function(add_nova_example_executable name src)
     add_executable(${name} ${src})
-    target_link_libraries(${name} PRIVATE libecos)
+    target_link_libraries(${name} PRIVATE libnova)
     target_compile_definitions(${name} PRIVATE DATA_FOLDER="${PROJECT_SOURCE_DIR}/data")
     target_compile_definitions(${name} PRIVATE RESULT_FOLDER="${PROJECT_SOURCE_DIR}/results")
     target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/controlled_temperature)

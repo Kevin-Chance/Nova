@@ -5,7 +5,7 @@ from pathlib import Path
 
 class MyListener(SimulationListener):
 
-    def __init__(self, sim: EcosSimulation):
+    def __init__(self, sim: NovaSimulation):
         self.sim = sim
 
     def pre(self, info: SimulationInfo):
@@ -16,14 +16,14 @@ class MyListener(SimulationListener):
 
 
 def main():
-    print(f"Ecoslib version: {EcosLib.version()}")
+    print(f"Novalib version: {NovaLib.version()}")
 
-    EcosLib.set_log_level("debug")
+    NovaLib.set_log_level("debug")
 
     ssp_dir = (Path(__file__).parent.parent.parent / 'data' / 'ssp' / '1.0' / 'quarter_truck').resolve()
     result_file = f"results/python/quarter_truck.csv"
 
-    with (EcosSimulation(ssp_path=f"{ssp_dir}", step_size=1.0 / 100)) as sim:
+    with (NovaSimulation(ssp_path=f"{ssp_dir}", step_size=1.0 / 100)) as sim:
 
         sim.add_csv_writer(result_file, f"{ssp_dir}/CsvConfig.xml")
         sim.add_listener("custom_listener", MyListener(sim))

@@ -1,16 +1,16 @@
-#include "ecos/algorithm/fixed_step_algorithm.hpp"
-#include "ecos/listeners/csv_writer.hpp"
-#include "ecos/logger/logger.hpp"
-#include "ecos/ssp/ssp_loader.hpp"
-#include "ecos/util/plotter.hpp"
+#include "nova/algorithm/fixed_step_algorithm.hpp"
+#include "nova/listeners/csv_writer.hpp"
+#include "nova/logger/logger.hpp"
+#include "nova/ssp/ssp_loader.hpp"
+#include "nova/util/plotter.hpp"
 
 #include <spdlog/stopwatch.h>
 
-using namespace ecos;
+using namespace nova;
 
 int main()
 {
-    log::set_logging_level(ecos::log::level::debug);
+    log::set_logging_level(nova::log::level::debug);
 
     const std::filesystem::path sspFolder = std::string(DATA_FOLDER) + "/ssp/1.0/quarter_truck";
 

@@ -1,21 +1,21 @@
-from ecospy import *
-from ecospy.plotter import *
+from novapy import *
+from novapy.plotter import *
 
 from pathlib import Path
 
 def main():
-    print(f"Ecoslib version: {EcosLib.version()}")
+    print(f"Novalib version: {NovaLib.version()}")
 
-    EcosLib.set_log_level("debug")
+    NovaLib.set_log_level("debug")
 
     fmu_path = str((Path(__file__).parent.parent.parent / 'data' / 'fmus' / '3.0' / 'ref' / 'Stair.fmu').resolve())
     result_file = "results/python/stair.csv"
 
-    with EcosSimulationStructure() as ss:
+    with NovaSimulationStructure() as ss:
         ss.add_model("model", fmu_path)
 
         step = 0.2
-        with (EcosSimulation(structure=ss, step_size=step)) as sim:
+        with (NovaSimulation(structure=ss, step_size=step)) as sim:
 
             sim.add_csv_writer(result_file)
             sim.init()

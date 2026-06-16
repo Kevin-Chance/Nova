@@ -19,6 +19,6 @@ setup(
     packages=find_packages(),  
     include_package_data=True,  
     data_files=[
-        ("Scripts", [f"nova_sim_py/binaries/ecos{binary_suffix()}"]) 
+        ("Scripts", [f"nova_sim_py/binaries/nova{binary_suffix()}"]) 
     ],
 )

@@ -1,6 +1,6 @@
 
-#ifndef ECOS_FMI_SHARED_LIBRARY_HPP
-#define ECOS_FMI_SHARED_LIBRARY_HPP
+#ifndef NOVA_FMI_SHARED_LIBRARY_HPP
+#define NOVA_FMI_SHARED_LIBRARY_HPP
 
 #include <filesystem>
 #include <string>
@@ -59,4 +59,4 @@ private:
 
 } // namespace nova_fmi
 
-#endif // ECOS_FMI_SHARED_LIBRARY_HPP
+#endif // NOVA_FMI_SHARED_LIBRARY_HPP

@@ -1,16 +1,16 @@
 
-#ifndef LIBECOS_CT_COMMON_HPP
-#define LIBECOS_CT_COMMON_HPP
+#ifndef LIBNOVA_CT_COMMON_HPP
+#define LIBNOVA_CT_COMMON_HPP
 
-#include "ecos/algorithm/fixed_step_algorithm.hpp"
-#include "ecos/listeners/csv_writer.hpp"
-#include "ecos/logger/logger.hpp"
-#include "ecos/model_resolver.hpp"
-#include "ecos/simulation.hpp"
-#include "ecos/util/plotter.hpp"
+#include "nova/algorithm/fixed_step_algorithm.hpp"
+#include "nova/listeners/csv_writer.hpp"
+#include "nova/logger/logger.hpp"
+#include "nova/model_resolver.hpp"
+#include "nova/simulation.hpp"
+#include "nova/util/plotter.hpp"
 
 
-using namespace ecos;
+using namespace nova;
 
 inline double kelvi2deg(double k)
 {
@@ -57,4 +57,4 @@ inline int run(const std::filesystem::path& fmuPath, bool remoting)
     return 0;
 }
 
-#endif // LIBECOS_CT_COMMON_HPP
+#endif // LIBNOVA_CT_COMMON_HPP

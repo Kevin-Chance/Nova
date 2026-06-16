@@ -4,10 +4,10 @@
 #include "fmi3/fmi3_fmu.hpp"
 #include "util/temp_dir.hpp"
 #include "util/unzipper.hpp"
-#include "ecos/logger/logger.hpp"
+#include "nova/logger/logger.hpp"
 #include "nova_fmi_library.hpp"
 
-#include "ecos/util/nova_xml.hpp"
+#include "nova/util/nova_xml.hpp"
 #include <iostream>
 
 namespace nova_fmi {

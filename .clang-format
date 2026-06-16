@@ -28,7 +28,7 @@ IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '^[<"]catch2[/.]'
     Priority: 10
-  - Regex:      '^[<"]ecos[/.]'
+  - Regex:      '^[<"]nova[/.]'
     Priority:   20
   - Regex:      '^[<"](CLI|flatbuffers|simple_socket|ssp|spdlog|fmi4c|proxyfmu|subprocess)[/.]'
     Priority:   30
