@@ -2,9 +2,7 @@
 function(add_test_executable name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries(${name} PRIVATE libnova Catch2::Catch2WithMain)
-    if (NOVA_WITH_PROXYFMU)
-        target_link_libraries(${name} PRIVATE simple_socket) # why is this needed?
-    endif ()
+
     target_include_directories(${name} PRIVATE "${PROJECT_SOURCE_DIR}/src")
     target_compile_definitions(${name} PRIVATE DATA_FOLDER="${PROJECT_SOURCE_DIR}/data")
     add_test(NAME ${name} COMMAND ${name})
@@ -12,9 +10,7 @@ endfunction()
 
 
 add_subdirectory(nova)
-add_subdirectory(fmilibcpp)
+add_subdirectory(nova_fmi)
 add_subdirectory(reference_fmus)
 
-if (NOVA_WITH_PROXYFMU)
-    add_subdirectory(proxyfmu)
-endif ()
+

@@ -9,7 +9,7 @@
 #include <variant>
 #include <vector>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 struct real_attributes
@@ -90,6 +90,6 @@ struct scalar_variable
 
 using model_variables = std::vector<scalar_variable>;
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
 
 #endif // ECOS_FMI_SCALAR_VARIABLE_HPP

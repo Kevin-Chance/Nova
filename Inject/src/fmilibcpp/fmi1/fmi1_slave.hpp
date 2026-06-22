@@ -2,15 +2,15 @@
 #ifndef ECOS_FMI_FMI1_SLAVE_HPP
 #define ECOS_FMI_FMI1_SLAVE_HPP
 
-#include "fmilibcpp/fmicontext.hpp"
-#include "fmilibcpp/slave.hpp"
+#include "nova_fmi/fmicontext.hpp"
+#include "nova_fmi/slave.hpp"
 #include "util/temp_dir.hpp"
 
 #include <fmi4c.h>
 
 #include <memory>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 class fmi1_slave : public slave
@@ -58,6 +58,6 @@ private:
     double stop_time_{};
 };
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
 
 #endif // ECOS_FMI_FMI1_SLAVE_HPP

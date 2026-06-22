@@ -131,7 +131,7 @@ ArangoDB is a native multi-model database with flexible data models for document
 Cytopia is a free, open source retro pixel-art city building game with a big focus on mods. It utilizes a custom isometric rendering engine based on SDL2.
 
 ### [d-SEAMS](https://github.com/d-SEAMS/seams-core)
-Open source molecular dynamics simulation structure analysis suite of tools in modern C++.
+Open source molecular dynamics nova_engine structure analysis suite of tools in modern C++.
 
 ### [Giada - Your Hardcore Loop Machine](https://github.com/monocasual/giada)
 Minimal, open-source and cross-platform audio tool for live music production.

@@ -2,7 +2,7 @@
 #ifndef ECOS_FMI_MODEL_INSTANCE_HPP
 #define ECOS_FMI_MODEL_INSTANCE_HPP
 
-#include "fmilibcpp/buffered_slave.hpp"
+#include "nova_fmi/buffered_slave.hpp"
 
 #include "ecos/model_instance.hpp"
 #include "ecos/logger/logger.hpp"
@@ -13,7 +13,7 @@ namespace ecos
 
 struct fmi_state : model_state
 {
-    fmi_state(fmilibcpp::slave* slave, void* state)
+    fmi_state(nova_fmi::slave* slave, void* state)
         : slave_(slave)
         , state_(state)
     { }
@@ -28,7 +28,7 @@ struct fmi_state : model_state
 
 private:
     friend class fmi_model_instance;
-    fmilibcpp::slave* slave_;
+    nova_fmi::slave* slave_;
     void* state_;
 };
 
@@ -36,9 +36,9 @@ class fmi_model_instance : public model_instance
 {
 
 public:
-    explicit fmi_model_instance(std::unique_ptr<fmilibcpp::slave> slave, std::optional<double> stepSizeHint)
+    explicit fmi_model_instance(std::unique_ptr<nova_fmi::slave> slave, std::optional<double> stepSizeHint)
         : model_instance(slave->instanceName, stepSizeHint)
-        , slave_(std::make_unique<fmilibcpp::buffered_slave>(std::move(slave)))
+        , slave_(std::make_unique<nova_fmi::buffered_slave>(std::move(slave)))
     {
 
         const auto name = slave_->instanceName;
@@ -171,18 +171,18 @@ public:
     }
 
 private:
-    std::vector<fmilibcpp::value_ref> vrBuf = std::vector<fmilibcpp::value_ref>(1);
+    std::vector<nova_fmi::value_ref> vrBuf = std::vector<nova_fmi::value_ref>(1);
     std::vector<double> rBuf = std::vector<double>(1);
     std::vector<int> iBuf = std::vector<int>(1);
     std::vector<bool> bBuf = std::vector<bool>(1);
     std::vector<std::string> sBuf = std::vector<std::string>(1);
     std::vector<std::vector<double>> vBuf = std::vector<std::vector<double>>(1);
-    std::unique_ptr<fmilibcpp::buffered_slave> slave_;
+    std::unique_ptr<nova_fmi::buffered_slave> slave_;
 
     struct prop_lister : property_listener
     {
 
-        explicit prop_lister(fmilibcpp::buffered_slave& slave)
+        explicit prop_lister(nova_fmi::buffered_slave& slave)
             : slave_(slave)
         { }
 
@@ -197,7 +197,7 @@ private:
         }
 
     private:
-        fmilibcpp::buffered_slave& slave_;
+        nova_fmi::buffered_slave& slave_;
     };
 };
 

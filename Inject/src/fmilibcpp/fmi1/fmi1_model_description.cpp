@@ -38,14 +38,14 @@ std::optional<std::string> fmi1VariabilityToString(fmi1Variability variability)
     }
 }
 
-std::optional<fmilibcpp::scalar_variable> to_scalar_variable(fmi1VariableHandle* v)
+std::optional<nova_fmi::scalar_variable> to_scalar_variable(fmi1VariableHandle* v)
 {
     const auto type = fmi1_getVariableDataType(v);
     if (type == fmi1DataTypeEnumeration) {
         return std::nullopt;
     }
 
-    fmilibcpp::scalar_variable var;
+    nova_fmi::scalar_variable var;
     var.vr = fmi1_getVariableValueReference(v);
     var.name = fmi1_getVariableName(v);
     var.description = fmi1_getVariableDescription(v) ? fmi1_getVariableDescription(v) : "";
@@ -54,28 +54,28 @@ std::optional<fmilibcpp::scalar_variable> to_scalar_variable(fmi1VariableHandle*
 
     switch (type) {
         case fmi1DataTypeReal: {
-            fmilibcpp::real_attributes r{};
+            nova_fmi::real_attributes r{};
             if (fmi1_getVariableHasStartValue(v)) {
                 r.start = fmi1_getVariableStartReal(v);
             }
             var.typeAttributes = r;
         } break;
         case fmi1DataTypeInteger: {
-            fmilibcpp::integer_attributes i{};
+            nova_fmi::integer_attributes i{};
             if (fmi1_getVariableHasStartValue(v)) {
                 i.start = fmi1_getVariableStartInteger(v);
             }
             var.typeAttributes = i;
         } break;
         case fmi1DataTypeBoolean: {
-            fmilibcpp::boolean_attributes b{};
+            nova_fmi::boolean_attributes b{};
             if (fmi1_getVariableHasStartValue(v)) {
                 b.start = fmi1_getVariableStartBoolean(v);
             }
             var.typeAttributes = b;
         } break;
         case fmi1DataTypeString: {
-            fmilibcpp::string_attributes s{};
+            nova_fmi::string_attributes s{};
             if (fmi1_getVariableHasStartValue(v)) {
                 s.start = fmi1_getVariableStartString(v);
             }
@@ -88,7 +88,7 @@ std::optional<fmilibcpp::scalar_variable> to_scalar_variable(fmi1VariableHandle*
 
 } // namespace
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 model_description create_fmi1_model_description(fmuHandle* handle)
@@ -121,4 +121,4 @@ model_description create_fmi1_model_description(fmuHandle* handle)
     return md;
 }
 
-} // namespace fmilibcpp
+} // namespace nova_fmi

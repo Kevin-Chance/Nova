@@ -72,21 +72,13 @@ link_directories(${THIRD_PARTY_INCLUDE_DIR}/oneTBB/lib/intel64/gcc4.8)
 
 include(FetchContent)
 
-if (NOVA_WITH_PROXYFMU)
-    set(SIMPLE_SOCKET_BUILD_TESTS OFF)
-    FetchContent_Declare(
-            SimpleSocket
-            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/SimpleSocket
-    )
-    FetchContent_MakeAvailable(SimpleSocket)
-endif ()
+
 
 # ==============================================================================
 # Targets
 # ==============================================================================
 
 add_subdirectory(src)
-add_subdirectory(tool)
 
 
 if (NOVA_BUILD_EXAMPLES)
@@ -118,18 +110,13 @@ install(
         DESTINATION
         ${CMAKE_INSTALL_DATADIR}/nova)
 
-install(TARGETS libnova libnova_simc fmilibcpp
+install(TARGETS libnova libnova_simc nova_fmi
         EXPORT nova-targets
 )
 if (NOVA_BUILD_CLI)
     install(TARGETS nova EXPORT nova-targets)
 endif ()
-if (NOVA_WITH_PROXYFMU)
-    install(
-            TARGETS proxyfmu
-            EXPORT nova-targets
-    )
-endif ()
+
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(EXPORT nova-targets

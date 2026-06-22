@@ -8,7 +8,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 struct default_experiment
@@ -74,6 +74,6 @@ struct model_description
     }
 };
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
 
 #endif // ECOS_FMI_MODEL_DESCRIPTION_HPP

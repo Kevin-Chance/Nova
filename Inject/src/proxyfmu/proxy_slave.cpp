@@ -47,7 +47,7 @@ namespace ecos::proxy
 proxy_slave::proxy_slave(
     const std::filesystem::path& fmuPath,
     const std::string& instanceName,
-    fmilibcpp::model_description modelDescription,
+    nova_fmi::model_description modelDescription,
     const std::optional<remote_info>& remote)
     : slave(instanceName)
     , modelDescription_(std::move(modelDescription))
@@ -113,7 +113,7 @@ proxy_slave::proxy_slave(
     client_->readExact(&token, 1);
 }
 
-const fmilibcpp::model_description& proxy_slave::get_model_description() const
+const nova_fmi::model_description& proxy_slave::get_model_description() const
 {
     return modelDescription_;
 }
@@ -213,7 +213,7 @@ bool proxy_slave::reset()
     return status;
 }
 
-bool proxy_slave::get_integer(const std::vector<fmilibcpp::value_ref>& vr, std::vector<int32_t>& values)
+bool proxy_slave::get_integer(const std::vector<nova_fmi::value_ref>& vr, std::vector<int32_t>& values)
 {
     assert(values.size() == vr.size());
 
@@ -246,7 +246,7 @@ bool proxy_slave::get_integer(const std::vector<fmilibcpp::value_ref>& vr, std::
     return true;
 }
 
-bool proxy_slave::get_real(const std::vector<fmilibcpp::value_ref>& vr, std::vector<double>& values)
+bool proxy_slave::get_real(const std::vector<nova_fmi::value_ref>& vr, std::vector<double>& values)
 {
     assert(values.size() == vr.size());
 
@@ -279,7 +279,7 @@ bool proxy_slave::get_real(const std::vector<fmilibcpp::value_ref>& vr, std::vec
     return true;
 }
 
-bool proxy_slave::get_string(const std::vector<fmilibcpp::value_ref>& vr, std::vector<std::string>& values)
+bool proxy_slave::get_string(const std::vector<nova_fmi::value_ref>& vr, std::vector<std::string>& values)
 {
     assert(values.size() == vr.size());
 
@@ -312,7 +312,7 @@ bool proxy_slave::get_string(const std::vector<fmilibcpp::value_ref>& vr, std::v
     return true;
 }
 
-bool proxy_slave::get_boolean(const std::vector<fmilibcpp::value_ref>& vr, std::vector<bool>& values)
+bool proxy_slave::get_boolean(const std::vector<nova_fmi::value_ref>& vr, std::vector<bool>& values)
 {
     assert(values.size() == vr.size());
 
@@ -345,7 +345,7 @@ bool proxy_slave::get_boolean(const std::vector<fmilibcpp::value_ref>& vr, std::
     return true;
 }
 
-bool proxy_slave::set_integer(const std::vector<fmilibcpp::value_ref>& vr, const std::vector<int32_t>& values)
+bool proxy_slave::set_integer(const std::vector<nova_fmi::value_ref>& vr, const std::vector<int32_t>& values)
 {
     assert(values.size() == vr.size());
 
@@ -372,7 +372,7 @@ bool proxy_slave::set_integer(const std::vector<fmilibcpp::value_ref>& vr, const
     return status;
 }
 
-bool proxy_slave::set_real(const std::vector<fmilibcpp::value_ref>& vr, const std::vector<double>& values)
+bool proxy_slave::set_real(const std::vector<nova_fmi::value_ref>& vr, const std::vector<double>& values)
 {
     assert(values.size() == vr.size());
 
@@ -399,7 +399,7 @@ bool proxy_slave::set_real(const std::vector<fmilibcpp::value_ref>& vr, const st
     return status;
 }
 
-bool proxy_slave::set_string(const std::vector<fmilibcpp::value_ref>& vr, const std::vector<std::string>& values)
+bool proxy_slave::set_string(const std::vector<nova_fmi::value_ref>& vr, const std::vector<std::string>& values)
 {
     assert(values.size() == vr.size());
 
@@ -430,7 +430,7 @@ bool proxy_slave::set_string(const std::vector<fmilibcpp::value_ref>& vr, const 
     return status;
 }
 
-bool proxy_slave::set_boolean(const std::vector<fmilibcpp::value_ref>& vr, const std::vector<bool>& values)
+bool proxy_slave::set_boolean(const std::vector<nova_fmi::value_ref>& vr, const std::vector<bool>& values)
 {
     assert(values.size() == vr.size());
 

@@ -1,7 +1,7 @@
 import pytest
 
 from pathlib import Path
-from nova_sim_py import NovaLib, NovaSimulationStructure, NovaSimulation
+from nova_sim_py import NovaLib, NovaSimulationStructure, NovaEngine
 
 fmi3_folder = (Path(__file__).parent.parent.parent / 'data' / 'fmus' / '3.0').resolve()
 fmu_files = list(fmi3_folder.rglob("*.fmu"))
@@ -19,7 +19,7 @@ def test_fmi3(fmu_path: Path, use_proxy: bool):
             )
             ss.add_model(fmu_path.stem, model_path)
 
-            with NovaSimulation(structure=ss, step_size=1 / 50) as sim:
+            with NovaEngine(structure=ss, step_size=1 / 50) as sim:
                 sim.init()
                 sim.step_until(1)
                 sim.terminate()

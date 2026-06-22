@@ -1,9 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "nova/nova_fmu_locator.hpp"
-#include "nova/simulation.hpp"
-#include <nova/algorithm/fixed_step_algorithm.hpp>
-#include <nova/structure/simulation_structure.hpp>
+#include "nova/engine/nova_fmu_locator.hpp"
+#include "nova/engine/nova_engine.hpp"
+#include <nova/components/algorithm/fixed_step_algorithm.hpp>
+#include <nova/components/structure/simulation_structure.hpp>
 
 using namespace nova_sim;
 
@@ -42,7 +42,7 @@ void run(const std::vector<std::filesystem::path>& paths)
         auto fmuModel = NovaFmuLocator::resolve(path.string());
         if (!fmuModel) continue;
 
-        simulation sim(std::make_unique<fixed_step_algorithm>(1.0 / 100));
+        nova_engine sim(std::make_unique<fixed_step_algorithm>(1.0 / 100));
         auto slave = fmuModel->instantiate(path.stem().string(), std::nullopt);
         if (!slave) continue;
         

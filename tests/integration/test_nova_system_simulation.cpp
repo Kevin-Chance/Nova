@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include "nova/structure/simulation_structure.hpp"
-#include "nova/algorithm/fixed_step_algorithm.hpp"
-#include "nova/logger/logger.hpp"
+#include "nova/components/structure/simulation_structure.hpp"
+#include "nova/components/algorithm/fixed_step_algorithm.hpp"
+#include "nova/components/logger/logger.hpp"
 #include <filesystem>
 
 using namespace nova_sim;

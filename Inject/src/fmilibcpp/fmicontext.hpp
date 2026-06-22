@@ -8,7 +8,7 @@
 
 #include <memory>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 class fmicontext
@@ -37,6 +37,6 @@ private:
     std::unique_ptr<ecos::temp_dir> unzippedFmu_;
 };
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
 
 #endif // ECOS_FMI_FMICONTEXT_HPP

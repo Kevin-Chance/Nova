@@ -6,7 +6,7 @@
 
 #include "ecos/model.hpp"
 
-#include "fmilibcpp/fmu.hpp"
+#include "nova_fmi/fmu.hpp"
 
 #include <filesystem>
 
@@ -18,10 +18,10 @@ class fmi_model : public model
 
 public:
     explicit fmi_model(const std::filesystem::path& fmuPath, bool fmiLogging = true)
-        : fmu_(fmilibcpp::loadFmu(fmuPath, fmiLogging))
+        : fmu_(nova_fmi::loadFmu(fmuPath, fmiLogging))
     { }
 
-    [[nodiscard]] fmilibcpp::model_description get_model_description() const
+    [[nodiscard]] nova_fmi::model_description get_model_description() const
     {
         return fmu_->get_model_description();
     }
@@ -32,7 +32,7 @@ public:
     }
 
 private:
-    std::unique_ptr<fmilibcpp::fmu> fmu_;
+    std::unique_ptr<nova_fmi::fmu> fmu_;
 };
 
 } // namespace ecos

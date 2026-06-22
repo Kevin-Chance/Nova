@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <nova/variable_identifier.hpp>
+#include <nova/engine/variable_identifier.hpp>
 
 #include <sstream>
 

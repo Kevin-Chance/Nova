@@ -1,0 +1,11 @@
+#include "nova/api/lib_info.hpp"
+
+namespace nova_sim
+{
+
+version library_version()
+{
+    return {@PROJECT_VERSION_MAJOR@, @PROJECT_VERSION_MINOR@, @PROJECT_VERSION_PATCH@};
+}
+
+} // namespace nova_sim

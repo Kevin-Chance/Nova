@@ -7,7 +7,7 @@ class NovaSimulationStructure:
             _load = dll.nova_simulation_structure_load_ssp
             _load.restype = c_void_p
             _load.argtypes = [c_char_p]
-            self._handle = _load(ssp_path.encode())
+            self._handle = _load(str(ssp_path).encode())
         else:
             _create = dll.nova_simulation_structure_create
             _create.restype = c_void_p
@@ -17,7 +17,7 @@ class NovaSimulationStructure:
         _add = dll.nova_simulation_structure_add_model
         _add.argtypes = [c_void_p, c_char_p, c_char_p]
         _add.restype = c_bool
-        return _add(self._handle, name.encode(), uri.encode())
+        return _add(self._handle, str(name).encode(), str(uri).encode())
 
     def make_connection(self, src_inst, src_var, dst_inst, dst_var, type="real"):
         _conn = dll.nova_simulation_structure_make_connection

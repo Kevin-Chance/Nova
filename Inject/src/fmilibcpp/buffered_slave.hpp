@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 class buffered_slave : public slave
@@ -372,6 +372,6 @@ private:
     bool initialized{false};
 };
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
 
 #endif // ECOS_FMI_BUFFERED_SLAVE_HPP

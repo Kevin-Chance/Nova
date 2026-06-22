@@ -6,7 +6,7 @@
 
 #include <fmi4c.h>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 fmi2_fmu::fmi2_fmu(std::unique_ptr<fmicontext> ctx, bool fmiLogging)
@@ -32,4 +32,4 @@ std::unique_ptr<slave> fmi2_fmu::new_instance(const std::string& instanceName)
 fmi2_fmu::~fmi2_fmu() = default;
 
 
-} // namespace fmilibcpp
+} // namespace nova_fmi

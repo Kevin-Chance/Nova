@@ -9,7 +9,7 @@
 
 #include <fmi4c.h>
 
-std::unique_ptr<fmilibcpp::fmu> fmilibcpp::loadFmu(const std::filesystem::path& fmuPath, bool fmiLogging)
+std::unique_ptr<nova_fmi::fmu> nova_fmi::loadFmu(const std::filesystem::path& fmuPath, bool fmiLogging)
 {
 
     if (!exists(fmuPath)) {

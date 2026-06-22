@@ -4,13 +4,13 @@
 
 #include "util/temp_dir.hpp"
 
-#include "fmilibcpp/fmicontext.hpp"
-#include "fmilibcpp/slave.hpp"
+#include "nova_fmi/fmicontext.hpp"
+#include "nova_fmi/slave.hpp"
 
 #include <fmi4c.h>
 #include <memory>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 class fmi2_slave : public slave
@@ -59,6 +59,6 @@ private:
     model_description md_;
 };
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
 
 #endif // ECOS_FMI_FMI2_SLAVE_HPP

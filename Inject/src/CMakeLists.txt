@@ -99,42 +99,42 @@ configure_file(
         @ONLY
 )
 
-add_library(fmilibcpp OBJECT
+add_library(nova_fmi OBJECT
 
-        "fmilibcpp/buffered_slave.hpp"
-        "fmilibcpp/fmicontext.hpp"
-        "fmilibcpp/fmu.hpp"
-        "fmilibcpp/model_description.hpp"
-        "fmilibcpp/scalar_variable.hpp"
-        "fmilibcpp/slave.hpp"
+        "nova_fmi/buffered_slave.hpp"
+        "nova_fmi/fmicontext.hpp"
+        "nova_fmi/fmu.hpp"
+        "nova_fmi/model_description.hpp"
+        "nova_fmi/scalar_variable.hpp"
+        "nova_fmi/slave.hpp"
 
-        "fmilibcpp/fmi1/fmi1_fmu.hpp"
-        "fmilibcpp/fmi1/fmi1_slave.hpp"
-        "fmilibcpp/fmi1/fmi1_model_description.hpp"
+        "nova_fmi/fmi1/fmi1_fmu.hpp"
+        "nova_fmi/fmi1/fmi1_slave.hpp"
+        "nova_fmi/fmi1/fmi1_model_description.hpp"
 
-        "fmilibcpp/fmi2/fmi2_fmu.hpp"
-        "fmilibcpp/fmi2/fmi2_slave.hpp"
-        "fmilibcpp/fmi2/fmi2_model_description.hpp"
+        "nova_fmi/fmi2/fmi2_fmu.hpp"
+        "nova_fmi/fmi2/fmi2_slave.hpp"
+        "nova_fmi/fmi2/fmi2_model_description.hpp"
 
-        "fmilibcpp/fmu.cpp"
+        "nova_fmi/fmu.cpp"
 
-        "fmilibcpp/fmi1/fmi1_fmu.cpp"
-        "fmilibcpp/fmi1/fmi1_slave.cpp"
-        "fmilibcpp/fmi1/fmi1_model_description.cpp"
+        "nova_fmi/fmi1/fmi1_fmu.cpp"
+        "nova_fmi/fmi1/fmi1_slave.cpp"
+        "nova_fmi/fmi1/fmi1_model_description.cpp"
 
-        "fmilibcpp/fmi2/fmi2_fmu.cpp"
-        "fmilibcpp/fmi2/fmi2_slave.cpp"
-        "fmilibcpp/fmi2/fmi2_model_description.cpp"
+        "nova_fmi/fmi2/fmi2_fmu.cpp"
+        "nova_fmi/fmi2/fmi2_slave.cpp"
+        "nova_fmi/fmi2/fmi2_model_description.cpp"
 
-        "fmilibcpp/fmi3/fmi3_fmu.cpp"
-        "fmilibcpp/fmi3/fmi3_slave.cpp"
-        "fmilibcpp/fmi3/fmi3_model_description.cpp"
+        "nova_fmi/fmi3/fmi3_fmu.cpp"
+        "nova_fmi/fmi3/fmi3_slave.cpp"
+        "nova_fmi/fmi3/fmi3_model_description.cpp"
 
         "external/pugixml/pugixml.cpp"
 )
-set_target_properties(fmilibcpp PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(fmilibcpp PRIVATE fmi4c)
-target_include_directories(fmilibcpp
+set_target_properties(nova_fmi PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(nova_fmi PRIVATE fmi4c)
+target_include_directories(nova_fmi
         PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/external/spdlog"
         PRIVATE
@@ -174,7 +174,7 @@ if (ECOS_WITH_PROXYFMU)
     )
 endif ()
 
-set(all_sources ${publicHeadersFull} ${privateHeaders} ${sources} ${generatedFiles} "$<TARGET_OBJECTS:fmi4c>" "$<TARGET_OBJECTS:fmilibcpp>")
+set(all_sources ${publicHeadersFull} ${privateHeaders} ${sources} ${generatedFiles} "$<TARGET_OBJECTS:fmi4c>" "$<TARGET_OBJECTS:nova_fmi>")
 if (ECOS_WITH_PROXYFMU)
     list(APPEND all_sources "$<TARGET_OBJECTS:simple_socket>" "$<TARGET_OBJECTS:proxy_fmu>")
 endif ()

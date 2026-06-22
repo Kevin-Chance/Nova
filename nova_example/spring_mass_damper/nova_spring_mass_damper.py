@@ -8,7 +8,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
 from nova_sim_py import *
-from nova_sim_py.plotter import Plotter, TimeSeriesConfig
+from nova_sim_py.chart_plotter import Plotter, TimeSeriesConfig
 
 def main():
     NovaLib.set_log_level("debug")
@@ -42,7 +42,7 @@ def main():
             "mass::mediumDensity": 1.0
         })
 
-        with NovaSimulation(structure=ss, step_size=1.0/100) as sim:
+        with NovaEngine(structure=ss, step_size=1.0/100) as sim:
 
             sim.add_csv_writer(result_file)
 
@@ -54,8 +54,8 @@ def main():
         title="Mass-spring-damper",
         y_label="Height[m]",
         identifiers=["mass::out_l_u"])
-    plotter = Plotter(result_file, config)
-    plotter.show()
+    chart_plotter = Plotter(result_file, config)
+    chart_plotter.show()
     print(f"Nova Python Spring-Mass-Damper finished. Results: {result_file}")
 
 

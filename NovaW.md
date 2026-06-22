@@ -36,10 +36,10 @@
 
 *   **Week 7 (05.18 - 05.24)：全新扁平化 C-API 开发**
     *   针对原 `src/nova/` 重构实现 `nova.h/cpp`，替代原来的 `nova.h`。
-    *   对外暴露纯 C 风格的函数（如 `nova_simulation_create`、`nova_simulation_step`），内部调用重写后的 `std::vector` 拓扑管理和 FMI RAII 引擎。
+    *   对外暴露纯 C 风格的函数（如 `nova_engine_create`、`nova_engine_step`），内部调用重写后的 `std::vector` 拓扑管理和 FMI RAII 引擎。
 *   **Week 8 (05.25 - 05.31)：Python面向对象封装与验证**
     *   物理删除项目根目录的 novapy 文件夹。创建 `nova_sim_py` 包结构。根据设计的 nova.h，使用 Python ctypes 重新定义 argtypes 和 restype 内存映射关系。
-    *   在 `nova_sim_py `内部开发全新的 Python API（将 NovaSimulationRunner 重写为 NovaExecutionEngine）
+    *   在 `nova_sim_py `内部开发全新的 Python API（将 NovaScheduler 重写为 NovaExecutionEngine）
     *   完成 Python 侧对模型加载、参数设置、步进调用的纯开发工作。
     *   验证 C++ 内嵌绘图 (Plotter) 的兼容性。确保底层变量读取接口变更后，通过 Python 脚本调用的 matplotlib 绘图功能依然有效。
 

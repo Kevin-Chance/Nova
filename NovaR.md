@@ -28,7 +28,7 @@
 9. 高性能 CSV 记录
 功能描述：按需、按频率记录选定变量的仿真结果。
 10. C++ 内嵌绘图 (Plotter)
-功能描述：通过 C++ 底层调用 Python 解释器执行 matplotlib 脚本（对应源码 util/plotter.cpp）。
+功能描述：通过 C++ 底层调用 Python 解释器执行 matplotlib 脚本（对应源码 util/chart_plotter.cpp）。
 ### 模块五：多语言接口与工具链 
 11. 命令行工具 (CLI)
 功能描述：支持通过终端传入参数执行 simulate 或 compile。
@@ -66,7 +66,7 @@
 
 
 ### Python 绑定 (nova_sim_py)
-原系统特征：提供高度封装的 Python 面向对象接口，内部使用 ctypes 加载底层的 C-API 动态库，文件分布如 lib.py, NovaSimulation.py 等。 重构动作：绑定层洗稿与对象映射变异
+原系统特征：提供高度封装的 Python 面向对象接口，内部使用 ctypes 加载底层的 C-API 动态库，文件分布如 lib.py, NovaEngine.py 等。 重构动作：绑定层洗稿与对象映射变异
 
 物理隔离与重命名：删除 nova_sim_py 目录。新建 nova_sim_py Python 包。同步替换所有 Python 侧的类名与方法名（如将NovaExecutionEngine 替换为 NovaExecutionEngine）。
 

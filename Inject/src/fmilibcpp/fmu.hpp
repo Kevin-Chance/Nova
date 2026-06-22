@@ -8,7 +8,7 @@
 #include <filesystem>
 #include <memory>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 class fmu
@@ -25,6 +25,6 @@ public:
 
 std::unique_ptr<fmu> loadFmu(const std::filesystem::path& fmuPath, bool fmiLogging = true);
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
 
 #endif // ECOS_FMI_FMU_FMU_HPP

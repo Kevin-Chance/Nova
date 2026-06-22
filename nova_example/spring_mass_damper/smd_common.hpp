@@ -2,12 +2,12 @@
 #ifndef NOVA_SMD_COMMON_HPP
 #define NOVA_SMD_COMMON_HPP
 
-#include "nova/algorithm/fixed_step_algorithm.hpp"
-#include "nova/logger/logger.hpp"
-#include "nova/simulation.hpp"
-#include "nova/structure/simulation_structure.hpp"
-#include "nova/listeners/csv_writer.hpp"
-#include "nova/util/plotter.hpp"
+#include "nova/components/algorithm/fixed_step_algorithm.hpp"
+#include "nova/components/logger/logger.hpp"
+#include "nova/engine/nova_engine.hpp"
+#include "nova/components/structure/simulation_structure.hpp"
+#include "nova/components/recorder/csv_recorder.hpp"
+#include "nova/components/util/chart_plotter.hpp"
 #include <filesystem>
 #include <map>
 
@@ -45,9 +45,9 @@ inline void run(simulation_structure& ss)
         const auto sim = ss.load(std::make_unique<fixed_step_algorithm>(1.0 / 100));
         
         std::filesystem::create_directories(RESULT_FOLDER);
-        auto csvWriter = std::make_unique<csv_writer>(std::string(RESULT_FOLDER) + "/nova_spring_mass_damper.csv");
+        auto csvWriter = std::make_unique<csv_recorder>(std::string(RESULT_FOLDER) + "/nova_spring_mass_damper.csv");
         const auto outputPath = csvWriter->output_path();
-        sim->add_listener("csv_writer", std::move(csvWriter));
+        sim->add_listener("csv_recorder", std::move(csvWriter));
 
         sim->init("initialValues");
     

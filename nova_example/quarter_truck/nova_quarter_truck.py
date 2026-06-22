@@ -7,7 +7,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
-from nova_sim_py import NovaSimulation, NovaSimulationStructure, NovaLib
+from nova_sim_py import NovaEngine, NovaSimulationStructure, NovaLib
 
 def main():
     print(f"NovaLib version: {NovaLib.version()}")
@@ -37,7 +37,7 @@ def main():
 
         ss.add_parameter_set("initialValues", {"chassis::C.mChassis": 400.0})
 
-        with NovaSimulation(structure=ss, step_size=1.0 / 100) as sim:
+        with NovaEngine(structure=ss, step_size=1.0 / 100) as sim:
             sim.add_csv_writer(result_file, str(ssp_dir / "CsvConfig.xml"))
             
             sim.init(parameter_set="initialValues")
@@ -47,7 +47,7 @@ def main():
 
     print(f"Nova Python Quarter-Truck finished. Results: {result_file}")
 
-    from nova_sim_py.plotter import Plotter, TimeSeriesConfig
+    from nova_sim_py.chart_plotter import Plotter, TimeSeriesConfig
     configs = [
         TimeSeriesConfig(
             title="Quarter-truck",
@@ -62,8 +62,8 @@ def main():
             y_label="Height[m]",
             identifiers=["ground::zGround"])
     ]
-    plotter = Plotter(result_file, configs)
-    plotter.show()
+    chart_plotter = Plotter(result_file, configs)
+    chart_plotter.show()
 
 if __name__ == "__main__":
     main()

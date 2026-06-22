@@ -1,14 +1,14 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "nova/algorithm/fixed_step_algorithm.hpp"
-#include "nova/nova_fmu_locator.hpp"
-#include "nova/simulation_runner.hpp"
-#include "nova/logger/logger.hpp"
+#include "nova/components/algorithm/fixed_step_algorithm.hpp"
+#include "nova/engine/nova_fmu_locator.hpp"
+#include "nova/engine/engine_scheduler.hpp"
+#include "nova/components/logger/logger.hpp"
 
 using namespace nova_sim;
 
-TEST_CASE("test simulation runner")
+TEST_CASE("test nova_engine runner")
 {
     set_logging_level(nova_sim::log::level::debug);
 
@@ -19,13 +19,13 @@ TEST_CASE("test simulation runner")
     REQUIRE((*fmuModel) != nullptr);
 
     // Also leak the sim to prevent teardown crashes
-    auto* sim = new simulation(std::make_unique<fixed_step_algorithm>(1.0 / 100));
+    auto* sim = new nova_engine(std::make_unique<fixed_step_algorithm>(1.0 / 100));
     auto inst = (*fmuModel)->instantiate("slave", std::nullopt);
     REQUIRE(inst != nullptr);
     sim->add_slave(std::move(inst));
     sim->init();
 
-    auto runner = simulation_runner(*sim);
+    auto runner = engine_scheduler(*sim);
     runner.set_real_time_factor(1);
     auto future = runner.run_while([&sim] {
         return sim->time() < 0.1;

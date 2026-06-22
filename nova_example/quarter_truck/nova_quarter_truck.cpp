@@ -1,9 +1,9 @@
 
-#include "nova/algorithm/fixed_step_algorithm.hpp"
-#include "nova/listeners/csv_writer.hpp"
-#include "nova/logger/logger.hpp"
-#include "nova/structure/simulation_structure.hpp"
-#include "nova/util/plotter.hpp"
+#include "nova/components/algorithm/fixed_step_algorithm.hpp"
+#include "nova/components/recorder/csv_recorder.hpp"
+#include "nova/components/logger/logger.hpp"
+#include "nova/components/structure/simulation_structure.hpp"
+#include "nova/components/util/chart_plotter.hpp"
 
 using namespace nova_sim;
 
@@ -32,13 +32,13 @@ int main()
         const auto sim = ss.load(std::make_unique<fixed_step_algorithm>(1.0 / 100));
 
         std::filesystem::create_directories(RESULT_FOLDER);
-        auto csvWriter = std::make_unique<csv_writer>(std::string(RESULT_FOLDER) + "/nova_quarter_truck_with_config.csv");
+        auto csvWriter = std::make_unique<csv_recorder>(std::string(RESULT_FOLDER) + "/nova_quarter_truck_with_config.csv");
         const auto outputPath = csvWriter->output_path();
         
         csv_config& config = csvWriter->config();
         config.load(sspDir / "CsvConfig.xml");
         
-        sim->add_listener("csv_writer", std::move(csvWriter));
+        sim->add_listener("csv_recorder", std::move(csvWriter));
 
         sim->init("initialValues");
         sim->step_until(5);

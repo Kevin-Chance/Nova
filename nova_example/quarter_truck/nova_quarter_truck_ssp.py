@@ -7,7 +7,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
-from nova_sim_py import NovaSimulation, NovaSimulationStructure, NovaLib
+from nova_sim_py import NovaEngine, NovaSimulationStructure, NovaLib
 
 def main():
     print(f"NovaLib version: {NovaLib.version()}")
@@ -20,7 +20,7 @@ def main():
     result_dir.mkdir(parents=True, exist_ok=True)
     result_file = str(result_dir / "nova_quarter_truck_ssp_py.csv")
 
-    with NovaSimulation(ssp_path=str(ssp_dir), step_size=1.0 / 100) as sim:
+    with NovaEngine(ssp_path=str(ssp_dir), step_size=1.0 / 100) as sim:
         sim.add_csv_writer(result_file, str(ssp_dir / "CsvConfig.xml"))
 
         sim.init(parameter_set="initialValues")

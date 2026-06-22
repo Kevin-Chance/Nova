@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include <nova/property.hpp>
+#include <nova/engine/property.hpp>
 
 using namespace nova_sim;
 

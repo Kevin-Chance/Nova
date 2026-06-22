@@ -1,5 +1,5 @@
 #include "ct_common.hpp"
-#include <nova/util/plotter.hpp>
+#include <nova/components/util/chart_plotter.hpp>
 
 int main()
 {

@@ -47,7 +47,7 @@ void noopfmilogger(fmi1Component*, fmi1String, fmi1Status, fmi1String, fmi1Strin
 } // namespace
 
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 fmi1_slave::fmi1_slave(
@@ -196,4 +196,4 @@ fmi1_slave::~fmi1_slave()
     fmi1_slave::freeInstance();
 }
 
-} // namespace fmilibcpp
+} // namespace nova_fmi

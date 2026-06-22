@@ -7,7 +7,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
 from nova_sim_py import *
-from nova_sim_py.plotter import Plotter, TimeSeriesConfig
+from nova_sim_py.chart_plotter import Plotter, TimeSeriesConfig
 
 def kelvin_to_deg(value: float) -> float:
     return value - 273.15
@@ -27,7 +27,7 @@ def main():
     with NovaSimulationStructure() as ss:
         ss.add_model("model", fmu_path)
 
-        with (NovaSimulation(structure=ss, step_size=1/100)) as sim:
+        with (NovaEngine(structure=ss, step_size=1/100)) as sim:
 
             sim.add_csv_writer(result_file)
             sim.init()
@@ -43,8 +43,8 @@ def main():
             "model::Temperature_Room" : kelvin_to_deg
         }
     )
-    plotter = Plotter(result_file, config)
-    plotter.show()
+    chart_plotter = Plotter(result_file, config)
+    chart_plotter.show()
     
     print(f"Nova Python ControlledTemperature finished. Results: {result_file}")
 

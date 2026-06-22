@@ -2,14 +2,14 @@
 #ifndef ECOS_FMI_FMI1_FMU_HPP
 #define ECOS_FMI_FMI1_FMU_HPP
 
-#include "fmilibcpp/fmicontext.hpp"
-#include "fmilibcpp/fmu.hpp"
+#include "nova_fmi/fmicontext.hpp"
+#include "nova_fmi/fmu.hpp"
 
 #include <fmi4c.h>
 
 #include <memory>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 class fmi1_fmu : public fmu
@@ -31,6 +31,6 @@ private:
     model_description md_;
 };
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
 
 #endif // ECOS_FMI_FMI1_FMU_HPP

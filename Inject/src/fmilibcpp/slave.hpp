@@ -8,7 +8,7 @@
 
 #include <vector>
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 using value_ref = unsigned int;
@@ -104,6 +104,6 @@ public:
     virtual ~slave() = default;
 };
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
 
 #endif // ECOS_FMI_SLAVE_HPP

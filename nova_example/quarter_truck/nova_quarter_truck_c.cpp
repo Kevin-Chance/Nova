@@ -1,5 +1,5 @@
 
-#include "nova/nova.h"
+#include "nova/api/nova.h"
 
 #include <filesystem>
 #include <string>
@@ -28,7 +28,7 @@ int main()
     nova_parameter_set_add_real(pps, "chassis::C.mChassis", 400.0);
     nova_simulation_structure_add_parameter_set(ss, "initialValues", pps);
 
-    const auto sim = nova_simulation_create(ss, 1.0 / 100);
+    const auto sim = nova_engine_create(ss, 1.0 / 100);
 
     nova_simulation_structure_destroy(ss);
     nova_parameter_set_destroy(pps);
@@ -38,16 +38,16 @@ int main()
     const auto resultFile = std::string(RESULT_FOLDER) + "/nova_quarter_truck_c_with_config.csv";
     
     std::filesystem::create_directories(RESULT_FOLDER);
-    const auto csvWriter = nova_csv_writer_create(resultFile.c_str(), csvConfig.c_str());
-    nova_simulation_add_listener(sim, "CSV Writer", csvWriter);
+    const auto csvWriter = nova_csv_recorder_create(resultFile.c_str(), csvConfig.c_str());
+    nova_engine_add_listener(sim, "CSV Writer", csvWriter);
 
-    nova_simulation_init(sim, 0, "initialValues");
-    nova_simulation_step_until(sim, 10);
-    nova_simulation_terminate(sim);
+    nova_engine_init(sim, 0, "initialValues");
+    nova_engine_step_until(sim, 10);
+    nova_engine_terminate(sim);
 
     nova_plot_csv(resultFile.c_str(), plotConfig.c_str());
 
-    nova_simulation_destroy(sim);
+    nova_engine_destroy(sim);
 
     return 0;
 }

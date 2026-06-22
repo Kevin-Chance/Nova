@@ -26,7 +26,7 @@ void loggerFmi3(fmi3InstanceEnvironment c,
     fmi3String message)
 {
 
-    const auto slave = static_cast<fmilibcpp::fmi3_slave*>(c);
+    const auto slave = static_cast<nova_fmi::fmi3_slave*>(c);
 
     std::ostringstream ss;
     ss << "[" << slave->instanceName << "] " << fmi3StatusToString(status) << " " << message << "\n";
@@ -36,7 +36,7 @@ void loggerFmi3(fmi3InstanceEnvironment c,
 
 } // namespace
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 fmi3_slave::fmi3_slave(
@@ -314,4 +314,4 @@ fmi3_slave::~fmi3_slave()
     fmi3_slave::freeInstance();
 }
 
-} // namespace fmilibcpp
+} // namespace nova_fmi

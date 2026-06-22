@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "nova/nova.h"
+#include "nova/api/nova.h"
 #include <fstream>
 #include <iostream>
 
@@ -22,27 +22,27 @@ TEST_CASE("Test C lib")
     auto ss = nova_simulation_structure_create();
     REQUIRE(nova_simulation_structure_add_model(ss, "slave", fmuPath.c_str()));
 
-    auto sim = nova_simulation_create(ss, 0.01);
+    auto sim = nova_engine_create(ss, 0.01);
     REQUIRE(sim);
 
-    REQUIRE(nova_simulation_init(sim, 0.0, nullptr));
+    REQUIRE(nova_engine_init(sim, 0.0, nullptr));
 
     double h_start = 0;
     // Check both names for robustness
-    if (!nova_simulation_get_real(sim, "slave", "height", &h_start)) {
-        REQUIRE(nova_simulation_get_real(sim, "slave", "h", &h_start));
+    if (!nova_engine_get_real(sim, "slave", "height", &h_start)) {
+        REQUIRE(nova_engine_get_real(sim, "slave", "h", &h_start));
     }
     CHECK(h_start > 0);
 
-    nova_simulation_step(sim, 10);
+    nova_engine_step(sim, 10);
 
     double h_end = 0;
-    if (!nova_simulation_get_real(sim, "slave", "height", &h_end)) {
-        REQUIRE(nova_simulation_get_real(sim, "slave", "h", &h_end));
+    if (!nova_engine_get_real(sim, "slave", "height", &h_end)) {
+        REQUIRE(nova_engine_get_real(sim, "slave", "h", &h_end));
     }
     CHECK(h_end < h_start);
 
-    nova_simulation_terminate(sim);
-    nova_simulation_destroy(sim);
+    nova_engine_terminate(sim);
+    nova_engine_destroy(sim);
     nova_simulation_structure_destroy(ss);
 }

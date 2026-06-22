@@ -7,7 +7,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
 from nova_sim_py import *
-from nova_sim_py.plotter import Plotter, TimeSeriesConfig
+from nova_sim_py.chart_plotter import Plotter, TimeSeriesConfig
 
 def main():
     print(f"NovaLib version: {NovaLib.version()}")
@@ -24,7 +24,7 @@ def main():
         ss.add_model("ball", fmu_path)
 
         # 1/100s 步长
-        with NovaSimulation(structure=ss, step_size=1/100) as sim:
+        with NovaEngine(structure=ss, step_size=1/100) as sim:
             sim.add_csv_writer(result_file)
             sim.init()
             
@@ -37,8 +37,8 @@ def main():
         title="BouncingBall",
         y_label="Height[m]",
         identifiers=["ball::h"])
-    plotter = Plotter(result_file, config)
-    plotter.show() 
+    chart_plotter = Plotter(result_file, config)
+    chart_plotter.show() 
 
     print(f"Nova Python BouncingBall finished. Results: {result_file}")
 

@@ -29,14 +29,14 @@ std::optional<std::string> fmi2VariabilityToString(fmi2Variability variability)
     }
 }
 
-std::optional<fmilibcpp::scalar_variable> to_scalar_variable(fmi2VariableHandle* v)
+std::optional<nova_fmi::scalar_variable> to_scalar_variable(fmi2VariableHandle* v)
 {
     const auto type = fmi2_getVariableDataType(v);
     if (type == fmi2DataTypeEnumeration) {
         return std::nullopt;
     }
 
-    fmilibcpp::scalar_variable var;
+    nova_fmi::scalar_variable var;
     var.vr = fmi2_getVariableValueReference(v);
     var.name = fmi2_getVariableName(v);
     var.description = fmi2_getVariableDescription(v) ? fmi2_getVariableDescription(v) : "";
@@ -45,35 +45,35 @@ std::optional<fmilibcpp::scalar_variable> to_scalar_variable(fmi2VariableHandle*
 
     switch (type) {
         case fmi2DataTypeReal: {
-            fmilibcpp::real_attributes r{};
+            nova_fmi::real_attributes r{};
             if (fmi2_getVariableHasStartValue(v)) {
                 r.start = fmi2_getVariableStartReal(v);
             }
             var.typeAttributes = r;
         } break;
         case fmi2DataTypeInteger: {
-            fmilibcpp::integer_attributes i{};
+            nova_fmi::integer_attributes i{};
             if (fmi2_getVariableHasStartValue(v)) {
                 i.start = fmi2_getVariableStartInteger(v);
             }
             var.typeAttributes = i;
         } break;
         case fmi2DataTypeBoolean: {
-            fmilibcpp::boolean_attributes b{};
+            nova_fmi::boolean_attributes b{};
             if (fmi2_getVariableHasStartValue(v)) {
                 b.start = fmi2_getVariableStartBoolean(v);
             }
             var.typeAttributes = b;
         } break;
         case fmi2DataTypeString: {
-            fmilibcpp::string_attributes s{};
+            nova_fmi::string_attributes s{};
             if (fmi2_getVariableHasStartValue(v)) {
                 s.start = fmi2_getVariableStartString(v);
             }
             var.typeAttributes = s;
         } break;
         case fmi2DataTypeVector: {
-            fmilibcpp::vector_attributes ve{};
+            nova_fmi::vector_attributes ve{};
             if (fmi2_getVariableHasStartValue(v)) {
                 int len = 0;
                 const double* rawVec = fmi2_getVariableStartVector(v, &len);
@@ -92,7 +92,7 @@ std::optional<fmilibcpp::scalar_variable> to_scalar_variable(fmi2VariableHandle*
 
 } // namespace
 
-namespace fmilibcpp
+namespace nova_fmi
 {
 
 model_description create_fmi2_model_description(fmuHandle* handle)
@@ -125,4 +125,4 @@ model_description create_fmi2_model_description(fmuHandle* handle)
     return md;
 }
 
-} // namespace fmilibcpp
+} // namespace nova_fmi
