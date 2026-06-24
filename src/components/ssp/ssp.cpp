@@ -129,9 +129,18 @@ parse_parameter_bindings(const std::filesystem::path& dir, const xml::XmlNode& n
                 throw std::runtime_error(
                     "Unable to parse '" + absolute(std::filesystem::path(dir / source)).string() + "'");
             }
+            // In external files, the root node might be ssv:ParameterSet
             parameterSetNode = doc->child("ssv:ParameterSet");
         }
-        const auto name = parameterSetNode.attribute("name").as_string();
+        
+        if (!parameterSetNode) {
+            throw std::runtime_error("Failed to locate ssv:ParameterSet in parameter bindings!");
+        }
+
+        std::string name = parameterSetNode.attribute("name").as_string();
+        if (name.empty()) {
+            name = "initialValues"; // Fallback if name is missing from the SSP
+        }
         ParameterSet set{name};
         const auto parametersNode = parameterSetNode.child("ssv:Parameters");
         for (const auto parameterNode : parametersNode) {

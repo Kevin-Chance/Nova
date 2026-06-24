@@ -2,6 +2,7 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "ssp/ssp.hpp"
+#include <iostream>
 
 using namespace nova_sim;
 
@@ -47,6 +48,11 @@ void checkSystemStructure(const ssp::SystemStructureDescription& ssd)
     CHECK(wheel.connectors.at("p.e").type == wheel.connectors.at("p1.f").type);
 
     const auto& wheelParameters = wheel.parameterSets;
+    std::cout << "Wheel parameter set keys: ";
+    for (const auto& kv : wheelParameters) {
+        std::cout << "'" << kv.first << "' ";
+    }
+    std::cout << std::endl;
     REQUIRE(wheelParameters.at("initialValues").parameters.size() == 3);
 
     const ssp::Component& ground = components.at("ground");
@@ -106,4 +112,32 @@ TEST_CASE("test_ssp_parser_folder")
     const auto fixedStepNode = algorithmNode.child("osp:FixedStepAlgorithm");
     REQUIRE(fixedStepNode);
     CHECK_THAT(fixedStepNode.attribute("baseStepSize").as_double(), Catch::Matchers::WithinRel(1e-4));
+}
+
+#include <fstream>
+TEST_CASE("test_ssp_parser_negative_paths")
+{
+    std::filesystem::path bad_folder = std::filesystem::temp_directory_path() / "bad_ssp_test";
+    std::filesystem::create_directories(bad_folder);
+    std::filesystem::path bad_ssd = bad_folder / "SystemStructure.ssd";
+    std::ofstream ofs(bad_ssd);
+    ofs << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        << "<ssd:SystemStructureDescription xmlns:ssd=\"http://ssp-standard.org/SSP1/SystemStructureDescription\" name=\"BadSystem\">\n"
+        << "  <ssd:System name=\"Sys\">\n"
+        << "    <ssd:Elements>\n"
+        << "      <ssd:Component name=\"comp\" source=\"fake.fmu\">\n"
+        << "        <ssd:ParameterBindings>\n"
+        << "          <ssd:ParameterBinding>\n"
+        << "            <!-- Missing ssv:ParameterSet to trigger the runtime_error we patched earlier -->\n"
+        << "          </ssd:ParameterBinding>\n"
+        << "        </ssd:ParameterBindings>\n"
+        << "      </ssd:Component>\n"
+        << "    </ssd:Elements>\n"
+        << "  </ssd:System>\n"
+        << "</ssd:SystemStructureDescription>\n";
+    ofs.close();
+
+    CHECK_THROWS_AS(ssp::SystemStructureDescription(bad_folder.string()), std::runtime_error);
+
+    std::filesystem::remove_all(bad_folder);
 }

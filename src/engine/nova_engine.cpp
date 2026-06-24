@@ -10,6 +10,25 @@
 
 namespace nova_sim {
 
+struct ResolvedDataLink {
+    std::string type;
+    property_t<double>* src_real = nullptr;
+    property_t<double>* dst_real = nullptr;
+    std::function<double(double)> real_modifier;
+
+    property_t<int>* src_int = nullptr;
+    property_t<int>* dst_int = nullptr;
+
+    property_t<bool>* src_bool = nullptr;
+    property_t<bool>* dst_bool = nullptr;
+
+    property_t<std::string>* src_string = nullptr;
+    property_t<std::string>* dst_string = nullptr;
+
+    property_t<std::vector<double>>* src_vector = nullptr;
+    property_t<std::vector<double>>* dst_vector = nullptr;
+};
+
 struct nova_engine::Impl
 {
     double lastDelta_{};
@@ -24,6 +43,7 @@ struct nova_engine::Impl
     std::unordered_map<std::string, std::shared_ptr<engine_observer>> listeners_;
 
     nova_engine& sim_;
+    std::vector<ResolvedDataLink> resolved_links_;
 
     explicit Impl(nova_engine& sim, std::unique_ptr<algorithm> algorithm)
         : algorithm_(std::move(algorithm))
@@ -32,21 +52,28 @@ struct nova_engine::Impl
 
     void transfer_data()
     {
-        for (const auto& link : sim_.links_) {
-            auto src_inst = sim_.get_instance(link.src_instance);
-            auto dst_inst = sim_.get_instance(link.dst_instance);
-            if (!src_inst || !dst_inst) continue;
-
-            auto& src_props = src_inst->get_properties();
-            auto& dst_props = dst_inst->get_properties();
-
-            if (link.type == "real") {
-                auto sp = src_props.get_real_property(link.src_variable);
-                auto dp = dst_props.get_real_property(link.dst_variable);
-                if (sp && dp) {
-                    double val = sp->get_value();
-                    if (link.real_modifier) val = link.real_modifier(val);
-                    dp->set_value(val);
+        for (const auto& rlink : resolved_links_) {
+            if (rlink.type == "real") {
+                if (rlink.src_real && rlink.dst_real) {
+                    double val = rlink.src_real->get_value();
+                    if (rlink.real_modifier) val = rlink.real_modifier(val);
+                    rlink.dst_real->set_value(val);
+                }
+            } else if (rlink.type == "int") {
+                if (rlink.src_int && rlink.dst_int) {
+                    rlink.dst_int->set_value(rlink.src_int->get_value());
+                }
+            } else if (rlink.type == "bool") {
+                if (rlink.src_bool && rlink.dst_bool) {
+                    rlink.dst_bool->set_value(rlink.src_bool->get_value());
+                }
+            } else if (rlink.type == "string") {
+                if (rlink.src_string && rlink.dst_string) {
+                    rlink.dst_string->set_value(rlink.src_string->get_value());
+                }
+            } else if (rlink.type == "vector") {
+                if (rlink.src_vector && rlink.dst_vector) {
+                    rlink.dst_vector->set_value(rlink.src_vector->get_value());
                 }
             }
         }
@@ -75,6 +102,62 @@ struct nova_engine::Impl
     {
         if (initialized_) return;
         currentTime_ = startTime.value_or(0);
+
+        // 一次性解析所有数据连接为内存指针缓存
+        resolved_links_.clear();
+        for (const auto& link : sim_.links_) {
+            auto src_inst = sim_.get_instance(link.src_instance);
+            auto dst_inst = sim_.get_instance(link.dst_instance);
+            if (!src_inst || !dst_inst) {
+                log::warn("Invalid link: instance not found (src: {}, dst: {})", link.src_instance, link.dst_instance);
+                continue;
+            }
+
+            auto& src_props = src_inst->get_properties();
+            auto& dst_props = dst_inst->get_properties();
+
+            ResolvedDataLink rlink;
+            rlink.type = link.type;
+            rlink.real_modifier = link.real_modifier;
+
+            if (link.type == "real") {
+                rlink.src_real = src_props.get_real_property(link.src_variable);
+                rlink.dst_real = dst_props.get_real_property(link.dst_variable);
+                if (!rlink.src_real || !rlink.dst_real) {
+                    log::warn("Invalid link: real variable not found (src_var: {}, dst_var: {})", link.src_variable, link.dst_variable);
+                    continue;
+                }
+            } else if (link.type == "int") {
+                rlink.src_int = src_props.get_int_property(link.src_variable);
+                rlink.dst_int = dst_props.get_int_property(link.dst_variable);
+                if (!rlink.src_int || !rlink.dst_int) {
+                    log::warn("Invalid link: int variable not found (src_var: {}, dst_var: {})", link.src_variable, link.dst_variable);
+                    continue;
+                }
+            } else if (link.type == "bool") {
+                rlink.src_bool = src_props.get_bool_property(link.src_variable);
+                rlink.dst_bool = dst_props.get_bool_property(link.dst_variable);
+                if (!rlink.src_bool || !rlink.dst_bool) {
+                    log::warn("Invalid link: bool variable not found (src_var: {}, dst_var: {})", link.src_variable, link.dst_variable);
+                    continue;
+                }
+            } else if (link.type == "string") {
+                rlink.src_string = src_props.get_string_property(link.src_variable);
+                rlink.dst_string = dst_props.get_string_property(link.dst_variable);
+                if (!rlink.src_string || !rlink.dst_string) {
+                    log::warn("Invalid link: string variable not found (src_var: {}, dst_var: {})", link.src_variable, link.dst_variable);
+                    continue;
+                }
+            } else if (link.type == "vector") {
+                rlink.src_vector = src_props.get_vector_property(link.src_variable);
+                rlink.dst_vector = dst_props.get_vector_property(link.dst_variable);
+                if (!rlink.src_vector || !rlink.dst_vector) {
+                    log::warn("Invalid link: vector variable not found (src_var: {}, dst_var: {})", link.src_variable, link.dst_variable);
+                    continue;
+                }
+            }
+            resolved_links_.push_back(rlink);
+        }
         
         auto fixed_algo = dynamic_cast<fixed_step_algorithm*>(algorithm_.get());
         for (auto& instance : instances_) {
@@ -132,6 +215,9 @@ struct nova_engine::Impl
     {
         if (terminated_) return;
         for (auto& instance : instances_) { try { instance->terminate(); } catch(...) {} }
+        for (auto& listener : listeners_ | std::views::values) {
+            listener->post_terminate(sim_);
+        }
         terminated_ = true;
     }
 
@@ -178,6 +264,7 @@ void nova_engine::reset()
     pimpl_->terminated_ = false;
     pimpl_->currentTime_ = 0;
     pimpl_->num_iterations_ = 0;
+    pimpl_->resolved_links_.clear();
     for (auto& instance : pimpl_->instances_) instance->reset();
 }
 

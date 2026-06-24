@@ -87,7 +87,14 @@ if (NOVA_BUILD_EXAMPLES)
 endif ()
 
 if (NOVA_BUILD_TESTS)
-    # Tests are currently disabled due to missing dependencies/Catch2 source files in this environment.
+    include(FetchContent)
+    FetchContent_Declare(
+      Catch2
+      GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+      GIT_TAG        v3.4.0
+    )
+    FetchContent_MakeAvailable(Catch2)
+    add_subdirectory(tests)
 endif ()
 
 
