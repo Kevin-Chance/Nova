@@ -17,6 +17,12 @@ typedef fmi2Status (STDCALL *fmi2GetFMUstate_t)(fmi2Component, fmi2FMUstate*);
 typedef fmi2Status (STDCALL *fmi2SetFMUstate_t)(fmi2Component, fmi2FMUstate);
 typedef fmi2Status (STDCALL *fmi2FreeFMUstate_t)(fmi2Component, fmi2FMUstate*);
 
+typedef fmi2Status (STDCALL *fmi2FreeFMUstate_t)(fmi2Component, fmi2FMUstate*);
+
+/**
+ * @brief FMI 2.0 规定的环境回调函数集
+ * 提供给 FMU 内部调用以记录日志、分配内存等
+ */
 struct fmi2CallbackFunctions {
     void* logger;
     void* allocateMemory;
@@ -37,6 +43,16 @@ fmi2_fmu::fmi2_fmu(std::shared_ptr<NovaFmiLibrary> lib, std::unique_ptr<nova_sim
 
 const model_description& fmi2_fmu::get_model_description() const { return md_; }
 
+/**
+ * @brief 实例化一个新的 FMU 模型实例 (Slave)
+ *
+ * 此方法通过动态链接库符号获取 FMI 2.0 C-API 的函数指针，并使用它们来：
+ * 1. 实例化底层的 fmi2Component
+ * 2. 封装 C 接口为 NovaSlave 所需的 std::function 形式，使其可以通过统一的接口进行调用
+ *
+ * @param instanceName 实例名称
+ * @return 成功时返回封装好的 NovaSlave 实例指针，失败时返回 nullptr
+ */
 std::unique_ptr<NovaSlave> fmi2_fmu::new_instance(const std::string& instanceName) {
     auto s = std::make_unique<NovaSlave>(instanceName, md_, lib_);
     
@@ -64,10 +80,12 @@ std::unique_ptr<NovaSlave> fmi2_fmu::new_instance(const std::string& instanceNam
     }
     if (!c) return nullptr;
 
+    // 使用 shared_ptr 绑定 fmi2FreeInstance，以确保实例被正确析构释放
     s->component_ = std::shared_ptr<void>(c, [fmi2FreeInstance, lib](void* ptr) { 
         if (ptr && fmi2FreeInstance) fmi2FreeInstance(ptr); 
     });
 
+    // 绑定所有的 FMI 2.0 状态管理和变量访问函数
     auto fmi2SetupExperiment = lib->getFunction<fmi2SetupExperiment_t>("fmi2SetupExperiment");
     auto fmi2EnterInitializationMode = lib->getFunction<fmi2EnterInitializationMode_t>("fmi2EnterInitializationMode");
     auto fmi2ExitInitializationMode = lib->getFunction<fmi2ExitInitializationMode_t>("fmi2ExitInitializationMode");

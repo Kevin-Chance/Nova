@@ -5,7 +5,16 @@
 
 using namespace nova_sim;
 
-
+/**
+ * @brief 应用指定的参数集到当前模型实例
+ * 
+ * 在参数集字典中查找目标参数集，并遍历其中的所有变量覆盖其初始值。
+ * 针对 Real, Integer, Boolean, String 和 Vector 等不同类型的变量进行类型匹配和写入。
+ * 如果发生类型不匹配或变量不存在，会通过日志系统发出警告。
+ * 
+ * @param name 要应用的参数集名称
+ * @return 如果成功找到并应用该参数集返回 true，如果参数集不存在则返回 false
+ */
 bool model_instance::apply_parameter_set(const std::string& name)
 {
     if (parameterSets_.contains(name)) {
@@ -65,6 +74,11 @@ bool model_instance::apply_parameter_set(const std::string& name)
     return false;
 }
 
+/**
+ * @brief 添加一个新的参数集配置
+ * @param name 参数集名称
+ * @param parameterSet 变量名到标量值的键值对映射
+ */
 void model_instance::add_parameter_set(const std::string& name, const std::unordered_map<std::string, scalar_value>& parameterSet)
 {
     parameterSets_.emplace(name, parameterSet);

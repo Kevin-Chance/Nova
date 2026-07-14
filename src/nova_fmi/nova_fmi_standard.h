@@ -7,7 +7,13 @@
 #define STDCALL
 #endif
 
-// FMI 2.0 Standard Types
+// ---------------------------------------------------------------------------
+/** 
+ * @brief FMI 2.0 标准类型
+ * 这些类型将官方的 FMI 2.0 标准数据类型映射到其 C 语言的等效类型。
+ * 它们用于与 FMU 提供的共享库进行交互。
+ */
+// ---------------------------------------------------------------------------
 typedef void*           fmi2Component;
 typedef void*           fmi2ComponentEnvironment;
 typedef void*           fmi2FMUstate;
@@ -22,6 +28,7 @@ typedef char            fmi2Byte;
 #define fmi2True  1
 #define fmi2False 0
 
+/** @brief FMI 2.0 C-API 函数返回的状态码。 */
 typedef enum {
     fmi2OK, fmi2Warning, fmi2Discard, fmi2Error, fmi2Fatal, fmi2Pending
 } fmi2Status;
@@ -30,7 +37,7 @@ typedef enum {
     fmi2ModelExchange, fmi2CoSimulation
 } fmi2Type;
 
-// FMI 2.0 Function Signatures
+/** @brief FMI 2.0 函数签名 */
 typedef const char* (STDCALL *fmi2GetVersion_t)(void);
 typedef fmi2Component (STDCALL *fmi2Instantiate_t)(fmi2String, fmi2Type, fmi2String, fmi2String, const void*, fmi2Boolean, fmi2Boolean);
 typedef void (STDCALL *fmi2FreeInstance_t)(fmi2Component);

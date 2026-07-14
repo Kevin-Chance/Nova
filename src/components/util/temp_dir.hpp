@@ -47,10 +47,10 @@ private:
     static std::filesystem::path safe_temp_directory_path()
     {
         try {
-            return std::filesystem::temp_directory_path(); // fails in debug under WSL
+            return std::filesystem::temp_directory_path();
         } catch (const std::filesystem::filesystem_error& e) {
             log::warn("temp_directory_path() failed: {}", e.what());
-            // Fallback to /tmp (standard on Unix)
+            // 回退到 /tmp（Unix 上的标准路径）
             return "/tmp";
         }
     }

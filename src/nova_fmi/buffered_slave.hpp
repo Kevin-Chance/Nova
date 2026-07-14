@@ -7,6 +7,10 @@
 namespace nova_fmi
 {
 
+/**
+ * @brief NovaSlave 的包装类，引入了针对获取/设置变量操作的缓存机制
+ * 非常适用于批量属性访问，以提升与 FMI 交互时的性能。
+ */
 class buffered_slave : public NovaSlave
 {
 public:

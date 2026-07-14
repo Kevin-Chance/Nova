@@ -2,7 +2,7 @@
 #define NOVA_MODEL_HPP
 
 #include "nova/engine/model_instance.hpp"
-#include "../../src/nova_fmi/model_description.hpp"
+#include "nova_fmi/model_description.hpp"
 #include <memory>
 #include <optional>
 

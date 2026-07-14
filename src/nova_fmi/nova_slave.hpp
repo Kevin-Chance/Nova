@@ -11,13 +11,24 @@
 
 namespace nova_fmi {
 
+/**
+ * @brief slave 接口的具体实现，封装了 FMI C-API 回调
+ * 
+ * 使用 std::shared_ptr<void> 持有原始的 C FMI 组件指针，
+ * 以确保在对象析构时通过自定义删除器自动释放资源。
+ */
 class NovaSlave : public slave {
 public:
+    /** @brief 此特定 slave 解析后的模型描述数据 */
     model_description md;
 
     std::shared_ptr<void> component_;
     std::shared_ptr<NovaFmiLibrary> lib_;
 
+    /**
+     * @brief 封装了底层 FMI C-API 的函数指针集合
+     * 这些回调抽象了不同 FMI 版本（1.0, 2.0, 3.0）之间的差异。
+     */
     struct {
         std::function<bool(void*, double, double, double)> enter_init;
         std::function<bool(void*)> exit_init;
@@ -58,7 +69,7 @@ public:
     virtual bool set_state(void* state) { return fmi.set_state ? fmi.set_state(component_.get(), state) : false; }
     virtual bool free_state(void* state) { return fmi.free_state ? fmi.free_state(component_.get(), state) : false; }
 
-    // Batch interfaces
+    /** @brief 批量处理接口 */
     virtual bool get_real(const std::vector<value_ref>& vr, std::vector<double>& values) {
         return fmi.get_real ? fmi.get_real(component_.get(), vr.data(), vr.size(), values.data()) : false;
     }
@@ -101,7 +112,7 @@ public:
         return fmi.set_str ? fmi.set_str(component_.get(), vr.data(), vr.size(), ptrs.data()) : false;
     }
 
-    // Scalar versions
+    /** @brief 标量处理版本 */
     double get_real(value_ref vr) { double v = 0; fmi.get_real(component_.get(), &vr, 1, &v); return v; }
     void set_real(value_ref vr, double v) { fmi.set_real(component_.get(), &vr, 1, &v); }
     int32_t get_integer(value_ref vr) { int32_t v = 0; fmi.get_int(component_.get(), &vr, 1, &v); return v; }

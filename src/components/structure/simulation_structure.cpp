@@ -31,13 +31,13 @@ std::unique_ptr<nova_engine> simulation_structure::load(std::unique_ptr<algorith
 {
     auto sim = std::make_unique<nova_engine>(std::move(algorithm));
     
-    // Week 5: Clear and populate linear variable table
+    // 清理并填充线性变量表
     variables_.clear();
 
     for (const auto& [name, m_pair] : models_) {
         auto inst = m_pair.first->instantiate(name, m_pair.second);
         
-        // Week 5: Harvest variables from instantiated model into linear vector
+        // 从实例化的模型中收集变量到线性数组中
         const auto& props = inst->get_properties();
         for (const auto& pair : props.get_reals()) {
             variables_.push_back({pair.first, name, 0, "real"});
@@ -55,7 +55,7 @@ std::unique_ptr<nova_engine> simulation_structure::load(std::unique_ptr<algorith
         sim->add_slave(std::move(inst));
     }
 
-    // Transfer parameter sets to instantiated models
+    // 将参数集传递给实例化的模型
     for (const auto& [setName, paramMap] : parameterSets_) {
         for (const auto& [identifier, value] : paramMap) {
             auto inst = sim->get_instance(identifier.instanceName);
@@ -65,7 +65,7 @@ std::unique_ptr<nova_engine> simulation_structure::load(std::unique_ptr<algorith
         }
     }
 
-    // Week 4: Populate links in nova_engine
+    // nova_engine 中填充链接
     for (const auto& link : links_) {
         NovaDataLink nl;
         nl.src_instance = link.src_instance;

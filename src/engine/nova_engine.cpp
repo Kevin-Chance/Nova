@@ -10,6 +10,10 @@
 
 namespace nova_sim {
 
+/**
+ * @brief 解析后的数据连接
+ * 用于在仿真过程中快速传递数据，避免在热路径中进行字符串匹配和查找
+ */
 struct ResolvedDataLink {
     std::string type;
     property_t<double>* src_real = nullptr;
@@ -29,15 +33,20 @@ struct ResolvedDataLink {
     property_t<std::vector<double>>* dst_vector = nullptr;
 };
 
+/**
+ * @brief 仿真引擎的内部实现类 (PIMPL)
+ * 包含所有的状态数据、组件实例以及算法实现
+ */
 struct nova_engine::Impl
 {
-    double lastDelta_{};
-    double currentTime_{0};
-    bool initialized_{false};
-    bool terminated_{false};
-    unsigned long num_iterations_{0};
+    double lastDelta_{};           ///< 上一次步进的时间差
+    double currentTime_{0};        ///< 当前仿真时间
+    bool initialized_{false};      ///< 初始化标志
+    bool terminated_{false};       ///< 终止标志
+    unsigned long num_iterations_{0}; ///< 已执行的迭代次数
 
-    scenario scenario_;
+    scenario scenario_;            ///< 仿真场景，包含定时或条件触发的事件
+
     std::unique_ptr<algorithm> algorithm_;
     std::vector<std::unique_ptr<model_instance>> instances_;
     std::unordered_map<std::string, std::shared_ptr<engine_observer>> listeners_;
@@ -50,6 +59,10 @@ struct nova_engine::Impl
         , sim_(sim)
     { }
 
+    /**
+     * @brief 执行数据传输
+     * 遍历所有已解析的数据连接，将源属性的值同步到目标属性
+     */
     void transfer_data()
     {
         for (const auto& rlink : resolved_links_) {
@@ -79,6 +92,11 @@ struct nova_engine::Impl
         }
     }
 
+    /**
+     * @brief 执行指定步数的仿真
+     * @param numStep 需要执行的步数
+     * @return 仿真执行后的当前时间
+     */
     double step(unsigned int numStep)
     {
         if (!initialized_) throw std::runtime_error("init() has not been invoked!");
@@ -87,7 +105,7 @@ struct nova_engine::Impl
             for (auto& listener : listeners_ | std::views::values) listener->pre_step(sim_);
             scenario_.apply(currentTime_);
             
-            // Sync links is now handled inside algorithm_->step to allow sequential execution
+            // 链接同步现在在 algorithm_->step 内部处理，以允许顺序执行
             newT = algorithm_->step(currentTime_, sim_);
 
             lastDelta_ = newT - currentTime_;
@@ -98,6 +116,12 @@ struct nova_engine::Impl
         return currentTime_;
     }
 
+    /**
+     * @brief 初始化仿真引擎
+     * 设置初始时间，解析数据连接，并调用所有模型实例的初始化模式
+     * @param startTime 仿真的起始时间
+     * @param parameterSet 可选的参数集，用于覆盖默认参数
+     */
     void init(std::optional<double> startTime, const std::optional<std::string>& parameterSet)
     {
         if (initialized_) return;
@@ -164,20 +188,20 @@ struct nova_engine::Impl
             if (fixed_algo) fixed_algo->model_instance_added(instance.get());
         }
 
-        // 1. Enter initialization
+        // 1. 进入初始化模式
         for (auto& instance : instances_) {
             instance->enter_initialization_mode(currentTime_);
         }
 
-        // 2. Apply parameter set during initialization (FMI 2.0) 
-        // or immediately after initializeSlave (FMI 1.0) to match Nova behavior
+        // 2. 在初始化期间应用参数集（针对 FMI 2.0）
+        // 或在 initializeSlave 之后立即应用（针对 FMI 1.0），以匹配 Nova 行为
         if (parameterSet) {
             for (auto& instance : instances_) {
                 instance->apply_parameter_set(*parameterSet);
             }
         }
 
-        // 3. Propagate initial values and parameters
+        // 3. 传播初始值和参数
         for (int i = 0; i < 3; ++i) {
             for (auto& instance : instances_) {
                 instance->get_properties().apply_sets();
@@ -186,12 +210,12 @@ struct nova_engine::Impl
             sim_.sync_links();
         }
 
-        // 4. Exit initialization
+        // 4. 退出初始化模式
         for (auto& instance : instances_) {
             instance->exit_initialization_mode();
         }
 
-        // 5. Final sync after initialization to ensure all outputs are read and propagated
+        // 5. 初始化后的最终同步，确保所有输出都被读取和传播
         for (int i = 0; i < 3; ++i) {
             for (auto& instance : instances_) {
                 instance->get_properties().apply_gets();
@@ -211,6 +235,10 @@ struct nova_engine::Impl
         }
     }
 
+    /**
+     * @brief 终止仿真
+     * 安全地终止所有的模型实例，并通知监听器
+     */
     void terminate()
     {
         if (terminated_) return;
@@ -245,7 +273,8 @@ void nova_engine::step_until(double t)
         log::warn("Input time {} is not greater than the current nova_engine time {}. Simulation will not progress.", t, pimpl_->currentTime_);
     } else {
         // 步进直到达到或超过目标时间
-        while (pimpl_->currentTime_ + pimpl_->lastDelta_ < t + 1e-9) { // 考虑浮点数精度
+        // 考虑浮点数精度，当当前时间加上最后一次步进的大小仍然小于目标时间时，继续步进
+        while (pimpl_->currentTime_ + pimpl_->lastDelta_ < t + 1e-9) { 
             step();
         }
     }

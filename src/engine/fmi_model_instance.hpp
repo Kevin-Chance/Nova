@@ -16,9 +16,9 @@ public:
         : model_instance(slave->instanceName, stepSizeHint)
         , slave_(std::move(slave))
     {
-        // Fix WEEK 2: Pull variables from move-aware source
-        auto& vars = slave_->md.modelVariables;
-        for (const auto& v : vars) {
+        /** @brief 从支持 move 语义的来源拉取变量 */
+        const auto& vs = slave_->get_model_description().modelVariables;
+        for (const auto& v : vs) {
             std::string propertyName = v.name;
             unsigned int vr = v.vr;
             

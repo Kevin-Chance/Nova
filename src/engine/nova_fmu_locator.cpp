@@ -10,7 +10,6 @@ std::shared_ptr<model> NovaFmuLocator::resolve(const std::string& uri) {
 }
 
 std::shared_ptr<model> NovaFmuLocator::resolve(const std::filesystem::path& base, const std::string& uri) {
-    // Week 3 FINAL: Stateless locator to prevent memory corruption
     std::filesystem::path fmuFile = uri;
     if (!fmuFile.is_absolute()) fmuFile = base / uri;
     

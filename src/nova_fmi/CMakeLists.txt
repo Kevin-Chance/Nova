@@ -12,8 +12,8 @@ set_target_properties(nova_fmi PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(nova_fmi
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../include>
-    PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../components>
 )
 

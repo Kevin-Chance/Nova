@@ -44,7 +44,7 @@ inline std::vector<std::string> make_args(const std::string& zip, const std::str
         free(shell);
     }
 
-    // Use unzip in Git Bash, otherwise tar
+    // 在 Git Bash 中使用 unzip，否则使用 tar
     const bool use_unzip = shell_str.find("bash") != std::string::npos;
 #else
     constexpr bool use_unzip = true;
@@ -62,7 +62,7 @@ inline bool unzip_with_system(const std::vector<std::string>& args)
     for (const auto& arg : args) {
         argv.push_back(const_cast<char*>(arg.c_str()));
     }
-    argv.push_back(nullptr); // Null-terminate
+    argv.push_back(nullptr); // 以空字符结尾
 
 
 #ifdef _WIN32
@@ -70,23 +70,22 @@ inline bool unzip_with_system(const std::vector<std::string>& args)
     return result == 0;
 #else
     pid_t pid = fork();
-    if (pid == -1) {
-        return false; // Fork failed
-    }
-    if (pid == 0) {
-        // Child process
+    if (pid < 0) {
+        return false; // Fork 失败
+    } else if (pid == 0) {
+        // 子进程
         const int dev_null = open("/dev/null", O_WRONLY);
         if (dev_null != -1) {
-            dup2(dev_null, STDOUT_FILENO); // Redirect stdout to /dev/null
-            dup2(dev_null, STDERR_FILENO); // Redirect stderr to /dev/null
+            dup2(dev_null, STDOUT_FILENO); // 将标准输出重定向到 /dev/null
+            dup2(dev_null, STDERR_FILENO); // 将标准错误重定向到 /dev/null
             close(dev_null);
         }
 
         execvp(argv[0], argv.data());
-        // If execvp returns, it failed
+        // 如果 execvp 返回，说明执行失败
         std::_Exit(EXIT_FAILURE);
     }
-    // Parent process : wait for child
+    // 父进程：等待子进程
     int status = 0;
     waitpid(pid, &status, 0);
     return WIFEXITED(status) && WEXITSTATUS(status) == 0;

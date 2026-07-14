@@ -10,7 +10,7 @@
 
 namespace nova_fmi {
 
-// FMI 3.0 Standard Types
+// FMI 3.0 标准类型
 typedef void* fmi3Instance;
 typedef unsigned int fmi3ValueReference;
 typedef double fmi3Float64;
@@ -36,6 +36,16 @@ fmi3_fmu::fmi3_fmu(std::shared_ptr<NovaFmiLibrary> lib, std::unique_ptr<nova_sim
 
 const model_description& fmi3_fmu::get_model_description() const { return md_; }
 
+/**
+ * @brief 实例化一个新的 FMI 3.0 模型实例 (Slave)
+ *
+ * 加载 FMI 3.0 规范的 C API，并桥接到统一的 NovaSlave 接口。
+ * FMI 3.0 引入了更为复杂和完善的接口，例如浮点类型的显式精度（fmi3Float64）、
+ * 数组尺寸参数传递等，本方法对这些细节进行了适配。
+ *
+ * @param instanceName 实例名称
+ * @return 成功返回封装好的 NovaSlave 实例指针，失败返回 nullptr
+ */
 std::unique_ptr<NovaSlave> fmi3_fmu::new_instance(const std::string& instanceName) {
     auto s = std::make_unique<NovaSlave>(instanceName, md_, lib_);
     

@@ -9,7 +9,7 @@ message("Current ${PROJECT_NAME} version: ${CMAKE_PROJECT_VERSION}\n")
 # ==============================================================================
 
 option(BUILD_SHARED_LIBS OFF)
-option(NOVA_BUILD_TESTS "Build tests" ON)
+option(NOVA_BUILD_TESTS "Build tests" OFF)
 option(NOVA_BUILD_EXAMPLES "Build examples" ON)
 option(NOVA_BUILD_CLI "Build CLI" OFF)
 option(NOVA_BUILD_CLIB "Build C library (required for nova_sim_py)" ON)
@@ -69,6 +69,7 @@ include_directories(${THIRD_PARTY_INCLUDE_DIR})
 # === 添加 TBB 路径 ===
 include_directories(${THIRD_PARTY_INCLUDE_DIR}/oneTBB/include)
 link_directories(${THIRD_PARTY_INCLUDE_DIR}/oneTBB/lib/intel64/gcc4.8)
+set(NOVA_TBB_LIBRARY "${THIRD_PARTY_INCLUDE_DIR}/oneTBB/lib/intel64/gcc4.8/libtbb.so.12.16")
 
 include(FetchContent)
 
@@ -120,6 +121,11 @@ install(
 install(TARGETS libnova libnova_simc nova_fmi
         EXPORT nova-targets
 )
+if (UNIX)
+    install(FILES ${NOVA_TBB_LIBRARY}
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RENAME libtbb.so.12)
+endif ()
 if (NOVA_BUILD_CLI)
     install(TARGETS nova EXPORT nova-targets)
 endif ()

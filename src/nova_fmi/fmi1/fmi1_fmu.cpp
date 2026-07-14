@@ -19,7 +19,7 @@ typedef int fmi1Integer;
 typedef int fmi1Boolean;
 typedef const char* fmi1String;
 
-// FIX WEEK 1: FMI 1.0 passes fmiCallbackFunctions by VALUE. Must be a struct of 4 pointers!
+// FMI 1.0 通过值传递 fmiCallbackFunctions。必须是4个指针的结构体！
 struct fmi1CallbackFunctions {
     void* logger;
     void* allocateMemory;
@@ -45,7 +45,7 @@ template<typename T>
 T getFmi1Function(const std::shared_ptr<NovaFmiLibrary>& lib, const std::string& modelId, const std::string& name) {
     auto f = lib->getFunction<T>(name);
     if (!f) f = lib->getFunction<T>(modelId + "_" + name);
-    if (!f) f = lib->getFunction<T>("_" + name + "@36"); // Win32 stdcall fallback heuristic
+    if (!f) f = lib->getFunction<T>("_" + name + "@36"); // Win32 stdcall 降级启发式查找
     return f;
 }
 
@@ -54,12 +54,26 @@ fmi1_fmu::fmi1_fmu(std::shared_ptr<NovaFmiLibrary> lib, std::unique_ptr<nova_sim
 
 const model_description& fmi1_fmu::get_model_description() const { return md_; }
 
-// FMI 1.0 initialization state to delay fmiInitializeSlave
+/**
+ * @brief FMI 1.0 初始化状态缓存
+ * FMI 1.0 的初始化机制要求在 enter_init 和 exit_init 之间传递 start/stop time，
+ * 因此使用此结构体来临时存储这些参数，以便在 fmiInitializeSlave 时使用
+ */
 struct Fmi1InitState {
     double start;
     double stop;
 };
 
+/**
+ * @brief 实例化一个新的 FMI 1.0 模型实例 (Slave)
+ *
+ * 与 FMI 2.0 类似，通过解析动态链接库中的 fmi1 系列 C API 函数指针，
+ * 将其封装到统一的 NovaSlave 接口中。
+ * 注意 FMI 1.0 对于实例化参数、初始化流程和资源路径的处理与 2.0 存在显著区别。
+ *
+ * @param instanceName 实例名称
+ * @return 成功返回封装后的 NovaSlave 指针，失败返回 nullptr
+ */
 std::unique_ptr<NovaSlave> fmi1_fmu::new_instance(const std::string& instanceName) {
     auto s = std::make_unique<NovaSlave>(instanceName, md_, lib_);
     auto lib = lib_;
@@ -73,11 +87,11 @@ std::unique_ptr<NovaSlave> fmi1_fmu::new_instance(const std::string& instanceNam
     if (!fmi1InstantiateSlave || !fmi1FreeSlaveInstance) return nullptr;
 
     fmi1CallbackFunctions funcs = {nullptr, nullptr, nullptr, nullptr};
-    // Need a dummy allocator
+    // 需要一个虚拟的内存分配器
     funcs.allocateMemory = (void*)calloc;
     funcs.freeMemory = (void*)free;
 
-    // FMI 1.0 often prefers plain filesystem path over URI
+    // FMI 1.0 通常更喜欢普通的文件系统路径而不是 URI
     fmi1Component c = fmi1InstantiateSlave(instanceName.c_str(), md_.guid.c_str(), res.c_str(), "application/x-fmu-sharedlibrary", 0.0, 0, 0, funcs, 0);
     if (!c) c = fmi1InstantiateSlave(instanceName.c_str(), md_.guid.c_str(), resource_uri.c_str(), "application/x-fmu-sharedlibrary", 0.0, 0, 0, funcs, 0);
     if (!c) return nullptr;
@@ -109,6 +123,7 @@ std::unique_ptr<NovaSlave> fmi1_fmu::new_instance(const std::string& instanceNam
     };
     s->fmi.exit_init = [fmi1InitializeSlave, initState](void* ch) {
         if (!fmi1InitializeSlave) return false;
+        // FMI 1.0 在初始化时直接传入启停时间
         int status = fmi1InitializeSlave(ch, (fmi1Real)initState->start, (fmi1Boolean)(initState->stop > 0), (fmi1Real)initState->stop);
         if (status != 0) std::cerr << "[FMI1] Initialize failed with status: " << status << std::endl;
         return status == 0;

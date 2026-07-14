@@ -12,6 +12,19 @@
 
 namespace nova_fmi {
 
+/**
+ * @brief 从指定的路径加载 FMU 文件
+ *
+ * 该函数执行以下主要步骤：
+ * 1. 将 FMU 文件解压到临时目录
+ * 2. 解析 modelDescription.xml 以提取模型元数据（版本、GUID、变量列表等）
+ * 3. 根据当前操作系统平台和架构，定位并加载 FMU 的动态链接库 (DLL/SO/DYLIB)
+ * 4. 根据 FMI 版本（1.0, 2.0, 3.0）实例化相应的 fmu 派生类
+ *
+ * @param fmuPath FMU 文件的路径
+ * @param fmiLogging 是否启用 FMI 内部日志
+ * @return 成功加载则返回唯一指针，否则返回 nullptr
+ */
 std::unique_ptr<fmu> loadFmu(const std::filesystem::path& fmuPath, bool fmiLogging)
 {
     if (!std::filesystem::exists(fmuPath)) {
@@ -56,7 +69,7 @@ std::unique_ptr<fmu> loadFmu(const std::filesystem::path& fmuPath, bool fmiLoggi
     auto vars_node = root.child("ModelVariables");
     
     if (version.find("3.0") == 0) {
-        // FMI 3.0 Variables
+        // FMI 3.0 变量
         for (auto var : vars_node.children()) {
             std::string nodeName = var.name();
             if (nodeName == "Float64" || nodeName == "Float32" || nodeName == "Int32" || nodeName == "Int64" || 
@@ -90,7 +103,7 @@ std::unique_ptr<fmu> loadFmu(const std::filesystem::path& fmuPath, bool fmiLoggi
             }
         }
     } else {
-        // FMI 1.0 and 2.0 Variables
+        // FMI 1.0 和 2.0 变量
         for (auto var : vars_node.children("ScalarVariable")) {
             scalar_variable sv;
             sv.name = var.attribute("name").as_string();
@@ -123,6 +136,7 @@ std::unique_ptr<fmu> loadFmu(const std::filesystem::path& fmuPath, bool fmiLoggi
 
     std::string libPath;
     auto bins = temp->path() / "binaries";
+    // 根据操作系统和架构选择合适的动态库平台名称
 #ifdef _WIN32
   #if defined(_WIN64)
     std::vector<std::string> platforms = {"win64", "x86_64-windows"};
@@ -139,6 +153,7 @@ std::unique_ptr<fmu> loadFmu(const std::filesystem::path& fmuPath, bool fmiLoggi
     std::string ext = ".so";
 #endif
 
+    // 查找指定平台目录下的动态链接库
     if (std::filesystem::exists(bins)) {
         for (const auto& plat : platforms) {
             auto platDir = bins / plat;

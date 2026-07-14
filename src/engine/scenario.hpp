@@ -51,7 +51,7 @@ public:
     void invoke_at(timed_action ta);
     void reset();
 
-    // Week 6: Scenario intervention using linear search
+    /** @brief 使用线性搜索的场景干预 */
     void load(const std::filesystem::path& config, std::vector<std::unique_ptr<model_instance>>& instances);
 
 private:

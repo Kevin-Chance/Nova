@@ -31,10 +31,14 @@ NovaFmiLibrary::NovaFmiLibrary(const std::string& path)
     }
 }
 
+/**
+ * @brief 释放动态加载的库句柄
+ * 确保安全且仅调用一次 FreeLibrary 或 dlclose。
+ */
 NovaFmiLibrary::~NovaFmiLibrary() {
     if (pimpl_ && pimpl_->handle) {
 #ifdef _WIN32
-        // WEEK 1 FIX: Explicitly set to NULL before free to prevent re-entry
+        // 显式设置为 NULL 以防止重入
         HMODULE h = pimpl_->handle;
         pimpl_->handle = NULL;
         FreeLibrary(h);
@@ -46,6 +50,11 @@ NovaFmiLibrary::~NovaFmiLibrary() {
     }
 }
 
+/**
+ * @brief 根据符号名称从加载的共享库中获取函数指针
+ * @param name 要获取的函数名
+ * @return 如果找不到符号或者库未加载则返回 nullptr
+ */
 void* NovaFmiLibrary::getFunctionInternal(const std::string& name) const {
     if (!pimpl_ || !pimpl_->handle) return nullptr;
 #ifdef _WIN32

@@ -4,19 +4,28 @@
 
 namespace nova_sim {
 
+/**
+ * @brief 执行所有初始化动作
+ * 遍历并执行注册在场景中的初始化回调函数，然后清空列表
+ */
 void scenario::runInitActions() {
     for (auto& f : initActions) f();
     initActions.clear();
 }
 
+/**
+ * @brief 在给定时间点应用场景动作
+ * 处理到达触发时间的定时动作，并检查和执行满足条件的谓词动作
+ * @param t 当前仿真时间
+ */
 void scenario::apply(double t) {
-    // Process timed actions
+    // 处理定时动作 (Timed actions)
     while (!timedActionsQueue_.empty() && timedActionsQueue_.back().time_point() <= t + timedActionsQueue_.back().eps()) {
         timedActionsQueue_.back().invoke();
         discardedTimedActions.push_back(timedActionsQueue_.back());
         timedActionsQueue_.pop_back();
     }
-    // Process predicate actions
+    // 处理谓词动作 (Predicate actions)
     auto it = predicateActions.begin();
     while (it != predicateActions.end()) {
         if (it->invoke()) {
@@ -38,9 +47,15 @@ void scenario::invoke_at(timed_action ta) {
 void scenario::reset() {
     timedActionsQueue_.clear();
     predicateActions.clear();
-    // Re-fill if needed from original lists
+    // 如果需要，从原始列表中重新填充
 }
 
+/**
+ * @brief 从XML配置文件加载场景
+ * 解析给定的XML文件，并将其中定义的定时或条件动作添加到场景队列中
+ * @param config XML配置文件的路径
+ * @param instances 模型实例的列表，用于在动作触发时修改对应实例的变量
+ */
 void scenario::load(const std::filesystem::path& config, std::vector<std::unique_ptr<model_instance>>& instances) {
     if (!std::filesystem::exists(config)) {
         throw std::runtime_error("No such file: " + std::filesystem::absolute(config).string());

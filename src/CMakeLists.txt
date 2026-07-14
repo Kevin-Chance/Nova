@@ -61,7 +61,7 @@ set_target_properties(libnova PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 if (UNIX)
     # 显式链接 TBB 和系统库
-    target_link_libraries(libnova PUBLIC tbb pthread dl)
+    target_link_libraries(libnova PUBLIC "${NOVA_TBB_LIBRARY}" pthread dl)
 endif ()
 
 target_include_directories(libnova PUBLIC 
@@ -84,6 +84,12 @@ if (NOVA_BUILD_CLIB)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:libnova_simc>
         ${PY_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${NOVA_TBB_LIBRARY}
+        ${CMAKE_BINARY_DIR}/bin/libtbb.so.12
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${NOVA_TBB_LIBRARY}
+        ${PY_BINARY_DIR}/libtbb.so.12
         COMMENT "Copying libnova_simc to ${PY_BINARY_DIR}"
     )
 endif ()
